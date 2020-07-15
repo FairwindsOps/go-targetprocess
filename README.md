@@ -26,11 +26,11 @@ func main() {
 
 	userStories, err := tpClient.GetUserStories(
 		// The Where() filter function takes in any queries the targetprocess API accepts
-        // Read about those here: https://dev.targetprocess.com/docs/sorting-and-filters
+                // Read about those here: https://dev.targetprocess.com/docs/sorting-and-filters
 		tp.Where("EntityState.Name ne 'Done'"),
 		tp.Where("EntityState.Name ne 'Backlog'"),
-        // Simlar to Where(), the Include() function will limit the
-        // response to a given list of fields
+                // Simlar to Where(), the Include() function will limit the
+                // response to a given list of fields
 		tp.Include("Team", "Name", "ModifyDate"),
 	)
 	if err != nil {
