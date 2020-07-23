@@ -16,7 +16,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	tp "github.com/fairwindsops/go-targetprocess"
+	tp "github.com/FairwindsOps/go-targetprocess"
 )
 
 func main() {
