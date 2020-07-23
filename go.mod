@@ -1,4 +1,4 @@
-module github.com/fairwindsops/go-targetprocess
+module github.com/FairwindsOps/go-targetprocess
 
 go 1.14
 
