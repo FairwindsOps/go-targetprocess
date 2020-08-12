@@ -21,7 +21,7 @@ We label issues with the ["good first issue" tag](https://github.com/FairwindsOp
 ## Setting Up Your Development Environment
 ### Prerequisites
 
-TODO
+* A fully functioning golang 1.14 environment
 
 ## Running Tests
 
