@@ -1,0 +1,33 @@
+version: 2.1
+
+jobs:
+  test:
+    working_directory: /go/src/github.com/fairwindsops/go-targetprocess
+    docker:
+      - image: circleci/golang:1.14-stretch
+        environment:
+          GL_DEBUG: linters_output
+          GOPACKAGESPRINTGOLISTERRORS: "1"
+    steps:
+      - checkout
+      - run:
+          name: golangci-lint
+          command: |
+            curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.30.0
+            golangci-lint run -v
+      - run:
+          name: Run Tests
+          command: make test
+      - run:
+          name: codecov
+          command: bash <(curl -s https://codecov.io/bash)
+workflows:
+  version: 2
+  build:
+    jobs:
+      - test:
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /v.*/
