@@ -1,8 +1,16 @@
+<div align="center">
+
+[![codecov](https://codecov.io/gh/FairwindsOps/go-targetprocess/branch/master/graph/badge.svg?token=ZJPHZHLSOH)](https://codecov.io/gh/FairwindsOps/go-targetprocess) [![Apache 2.0 license](https://img.shields.io/badge/licence-Apache2-brightgreen.svg)](https://opensource.org/licenses/Apache-2.0)
+
+</div>
+
 # Go-Targetprocess
 
 Package targetprocess is a go library to make using the Targetprocess API easier. Some
 public types are included to ease in json -> struct unmarshaling.
 A lot of inspiration for this package comes from https://github.com/adlio/trello
+
+**Want to learn more?** Reach out on [the Slack channel](https://fairwindscommunity.slack.com/messages/goldilocks) ([request invite](https://join.slack.com/t/fairwindscommunity/shared_invite/zt-e3c6vj4l-3lIH6dvKqzWII5fSSFDi1g)), send an email to `opensource@fairwinds.com`, or join us for [office hours on Zoom](https://fairwindscommunity.slack.com/messages/office-hours)
 
 ## Usage
 
