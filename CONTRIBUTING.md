@@ -19,13 +19,22 @@ Package targetprocess is a go library to make using the Targetprocess API easier
 We label issues with the ["good first issue" tag](https://github.com/FairwindsOps/go-targetprocess/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) if we believe they'll be a good starting point for new contributors. If you're interested in working on an issue, please start a conversation on that issue, and we can help answer any questions as they come up. Another good place to start would be adding regression tests to existing plugins.
 
 ## Setting Up Your Development Environment
-### Prerequisites
 
-TODO
+When doing local development it helps to have a separate project on your machine to test new features or bugfixes. To accomplish this, in your copy of the project, set up the go.mod with a `replace` directive: 
+```
+module github.com/example/foo
+
+replace github.com/FairwindsOps/go-targetprocess => /Users/example/Projects/go-targetprocess
+
+require (
+	github.com/FairwindsOps/go-targetprocess v0.0.0
+)
+```
+On the `replace` directive, modify the path after the `=>` to the location on your workstation where you made the copy of go-targetprocess.
 
 ## Running Tests
 
-TODO
+`make` lints and tests even though there are no tests currently.
 
 ## Creating a New Issue
 
@@ -43,4 +52,4 @@ Each new pull request should:
 
 ## Creating a new release
 
-TBD
+Push a tag with the new version.
