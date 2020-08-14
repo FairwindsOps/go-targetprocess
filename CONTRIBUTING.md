@@ -20,6 +20,12 @@ We label issues with the ["good first issue" tag](https://github.com/FairwindsOp
 
 ## Setting Up Your Development Environment
 
+### Prerequisites
+
+* A fully functioning golang 1.14 environment
+
+### Setup
+
 When doing local development it helps to have a separate project on your machine to test new features or bugfixes. To accomplish this, in your copy of the project, set up the go.mod with a `replace` directive: 
 ```
 module github.com/example/foo
