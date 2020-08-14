@@ -40,7 +40,7 @@ On the `replace` directive, modify the path after the `=>` to the location on yo
 
 ## Running Tests
 
-`make` lints and tests even though there are no tests currently.
+Running `make` will lint go files and run tests
 
 ## Creating a New Issue
 
