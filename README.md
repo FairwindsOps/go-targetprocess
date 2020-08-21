@@ -1,8 +1,13 @@
 <div align="center">
 
-  [![GitHub release (latest SemVer)][release-image]][release-link] [![GitHub go.mod Go version][version-image]][version-link] [![CircleCI][circleci-image]][circleci-link] [![Code Coverage][codecov-image]][codecov-link] [![Go Report Card][goreport-image]][goreport-link] [![Apache 2.0 license](https://img.shields.io/badge/licence-Apache2-brightgreen.svg)](https://opensource.org/licenses/Apache-2.0)
+  [![PkgGoDev][godoc-image]][godoc-link][![GitHub release (latest SemVer)][release-image]][release-link] [![GitHub go.mod Go version][version-image]][version-link] [![CircleCI][circleci-image]][circleci-link] [![Code Coverage][codecov-image]][codecov-link] [![Go Report Card][goreport-image]][goreport-link] [![Apache 2.0 license](https://img.shields.io/badge/licence-Apache2-brightgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 
 </div>
+
+
+
+[godoc-image]: https://pkg.go.dev/badge/github.com/FairwindsOps/go-targetprocess
+[godoc-link]: https://pkg.go.dev/github.com/FairwindsOps/go-targetprocess
 
 [version-image]: https://img.shields.io/github/go-mod/go-version/FairwindsOps/go-targetprocess
 [version-link]: https://github.com/FairwindsOps/go-targetprocess

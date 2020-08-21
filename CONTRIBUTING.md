@@ -26,7 +26,7 @@ We label issues with the ["good first issue" tag](https://github.com/FairwindsOp
 
 ### Setup
 
-When doing local development it helps to have a separate project on your machine to test new features or bugfixes. To accomplish this, in your copy of the project, set up the go.mod with a `replace` directive: 
+When doing local development it helps to have a separate project on your machine to test new features or bugfixes. To accomplish this, in your copy of the project, set up the go.mod with a `replace` directive:
 ```
 module github.com/example/foo
 
@@ -44,7 +44,7 @@ Running `make` will lint go files and run tests
 
 ## Creating a New Issue
 
-If you've encountered an issue that is not already reported, please create a [new issue](https://github.com/FairwindsOps/go-targetprocess/issues), choose `Bug Report`, `Feature Request` or `Misc.` and follow the instructions in the template. 
+If you've encountered an issue that is not already reported, please create a [new issue](https://github.com/FairwindsOps/go-targetprocess/issues), choose `Bug Report`, `Feature Request` or `Misc.` and follow the instructions in the template.
 
 
 ## Creating a Pull Request
