@@ -14,6 +14,12 @@
 
 package targetprocess
 
+import (
+	"fmt"
+
+	"github.com/pkg/errors"
+)
+
 // Feature matches up with a targetprocess Feature
 type Feature struct {
 	client *Client
@@ -54,36 +60,19 @@ func (c *Client) GetFeatures(filters ...QueryFilter) ([]Feature, error) {
 	return ret, nil
 }
 
-// // GetProject will return a single project based on its name. If somehow there are projects with the same name,
-// // this will only return the first one.
-// func (c *Client) GetProject(name string) (Project, error) {
-// 	ret := Project{}
-// 	out := ProjectResponse{}
-// 	err := c.Get(&out, "Project", nil,
-// 		Where(fmt.Sprintf("Name eq '%s'", name)),
-// 		First(),
-// 	)
-// 	if err != nil {
-// 		return Project{}, errors.Wrap(err, fmt.Sprintf("error getting project with name '%s'", name))
-// 	}
-// 	ret = out.Items[0]
-// 	ret.client = c
-// 	return ret, nil
-// }
-
-// // NewUserStory will make a UserStory for assigned to the Project that this method is built off of and for the given Team
-// func (p Project) NewUserStory(name, description, team string) (UserStory, error) {
-// 	us := UserStory{
-// 		client:      p.client,
-// 		Name:        name,
-// 		Description: description,
-// 	}
-// 	p.client.debugLog(fmt.Sprintf("Attempting to Get Team: %s", team))
-// 	t, err := p.client.GetTeam(team)
-// 	if err != nil {
-// 		return UserStory{}, err
-// 	}
-// 	us.Project = &p
-// 	us.Team = &t
-// 	return us, nil
-// }
+// GetFeature will return a single feature based on its name. If somehow there are projects with the same name,
+// this will only return the first one.
+func (c *Client) GetFeature(name string) (Feature, error) {
+	ret := Feature{}
+	out := FeatureResponse{}
+	err := c.Get(&out, "Feature", nil,
+		Where(fmt.Sprintf("Name eq '%s'", name)),
+		First(),
+	)
+	if err != nil {
+		return Feature{}, errors.Wrap(err, fmt.Sprintf("error getting feature with name '%s'", name))
+	}
+	ret = out.Items[0]
+	ret.client = c
+	return ret, nil
+}
