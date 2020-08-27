@@ -24,11 +24,14 @@ import (
 type Feature struct {
 	client *Client
 
-	ID               int32   `json:"Id,omitempty"`
-	Name             string  `json:",omitempty"`
-	Effort           float32 `json:",omitempty"`
-	UserStoriesCount int64   `json:"UserStories-Count,omitempty"`
-	Project          Project `json:",omitempty"`
+	ID               int32         `json:"Id,omitempty"`
+	Name             string        `json:",omitempty"`
+	Effort           float32       `json:",omitempty"`
+	UserStoriesCount int64         `json:"UserStories-Count,omitempty"`
+	Project          Project       `json:",omitempty"`
+	Description      string        `json:",omitempty"`
+	NumericPriority  float32       `json:",omitempty"`
+	CustomFields     []CustomField `json:",omitempty"`
 }
 
 // FeatureResponse is a representation of the http response for a group of Features
