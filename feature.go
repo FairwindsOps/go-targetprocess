@@ -27,7 +27,7 @@ type Feature struct {
 	ID               int32   `json:"Id,omitempty"`
 	Name             string  `json:",omitempty"`
 	Effort           float32 `json:",omitempty"`
-	UserStoriesCount float32 `json:"UserStories-Count",omitempty`
+	UserStoriesCount int64   `json:"UserStories-Count,omitempty"`
 	Project          Project `json:",omitempty"`
 }
 
