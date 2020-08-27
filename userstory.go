@@ -73,7 +73,7 @@ func NewUserStory(c *Client, name, description, project string) (UserStory, erro
 	return us, nil
 }
 
-// SetProject adds a project to a user story
+// SetProject sets the Project field for a user story
 func (us *UserStory) SetProject(project string) error {
 	us.client.debugLog(fmt.Sprintf("Attempting to Get Team: %s", project))
 	p, err := us.client.GetProject(project)
@@ -84,7 +84,7 @@ func (us *UserStory) SetProject(project string) error {
 	return nil
 }
 
-// SetTeam adds a team to a user story
+// SetTeam sets the Team field for a user story
 func (us *UserStory) SetTeam(team string) error {
 	us.client.debugLog(fmt.Sprintf("Attempting to Get Team: %s", team))
 	t, err := us.client.GetTeam(team)
@@ -95,7 +95,7 @@ func (us *UserStory) SetTeam(team string) error {
 	return nil
 }
 
-// SetFeature adds a feature to a user story
+// SetFeature sets the Feature field for a user story
 func (us *UserStory) SetFeature(feature string) error {
 	us.client.debugLog(fmt.Sprintf("Attempting to Get Feature: %s", feature))
 	f, err := us.client.GetFeature(feature)
