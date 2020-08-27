@@ -46,7 +46,7 @@ type UserStory struct {
 	Team                *Team          `json:",omitempty"`
 	EntityState         *EntityState   `json:",omitempty"`
 	AssignedTeams       *AssignedTeams `json:",omitempty"`
-	Feature             Feature        `json:",omitmempty"`
+	Feature             *Feature       `json:",omitmempty"`
 }
 
 // UserStoryResponse is a representation of the http response for a group of UserStories
@@ -95,7 +95,7 @@ func NewUserStoryForTeam(c *Client, name, description, project, team string, fea
 		if err != nil {
 			return UserStory{}, err
 		}
-		us.Feature = f
+		us.Feature = &f
 	}
 	us.Project = &p
 	us.Team = &t
