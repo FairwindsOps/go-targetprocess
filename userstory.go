@@ -46,6 +46,7 @@ type UserStory struct {
 	Team                *Team          `json:",omitempty"`
 	EntityState         *EntityState   `json:",omitempty"`
 	AssignedTeams       *AssignedTeams `json:",omitempty"`
+	Feature             Feature        `json:",omitmempty"`
 }
 
 // UserStoryResponse is a representation of the http response for a group of UserStories
@@ -72,7 +73,7 @@ func NewUserStory(c *Client, name, description, project string) (UserStory, erro
 }
 
 // NewUserStoryForTeam is mostly the same as NewUserStory but assigns it to a team
-func NewUserStoryForTeam(c *Client, name, description, project, team string) (UserStory, error) {
+func NewUserStoryForTeam(c *Client, name, description, project, team string, feature *string) (UserStory, error) {
 	us := UserStory{
 		client:      c,
 		Name:        name,
@@ -87,6 +88,14 @@ func NewUserStoryForTeam(c *Client, name, description, project, team string) (Us
 	t, err := c.GetTeam(team)
 	if err != nil {
 		return UserStory{}, err
+	}
+	if feature != nil {
+		c.debugLog(fmt.Sprintf("Attempting to Get Feature: %s", *feature))
+		f, err := c.GetFeature(*feature)
+		if err != nil {
+			return UserStory{}, err
+		}
+		us.Feature = f
 	}
 	us.Project = &p
 	us.Team = &t
