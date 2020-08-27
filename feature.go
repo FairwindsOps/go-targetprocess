@@ -28,7 +28,7 @@ type Feature struct {
 	Name             string        `json:",omitempty"`
 	Effort           float32       `json:",omitempty"`
 	UserStoriesCount int64         `json:"UserStories-Count,omitempty"`
-	Project          Project       `json:",omitempty"`
+	Project          *Project      `json:",omitempty"`
 	Description      string        `json:",omitempty"`
 	NumericPriority  float32       `json:",omitempty"`
 	CustomFields     []CustomField `json:",omitempty"`
@@ -78,4 +78,14 @@ func (c *Client) GetFeature(name string) (Feature, error) {
 	ret = out.Items[0]
 	ret.client = c
 	return ret, nil
+}
+
+// NewUserStory will make a UserStory with the Feature that this method is built off of
+func (f Feature) NewUserStory(name, description, project string) (UserStory, error) {
+	us, err := NewUserStory(f.client, name, description, project)
+	if err != nil {
+		return UserStory{}, nil
+	}
+	us.Feature = &f
+	return us, nil
 }

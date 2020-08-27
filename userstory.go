@@ -57,49 +57,53 @@ type UserStoryResponse struct {
 }
 
 // NewUserStory creates a new UserStory with the required fields of
-// name, description, and project
+// name, description, and project.
+// If more fields are required, use the Add<Field> method of UserStory to add them
 func NewUserStory(c *Client, name, description, project string) (UserStory, error) {
 	us := UserStory{
 		client:      c,
 		Name:        name,
 		Description: description,
 	}
-	p, err := c.GetProject(project)
+	err := us.SetProject(project)
 	if err != nil {
 		return UserStory{}, err
 	}
-	us.Project = &p
+
 	return us, nil
 }
 
-// NewUserStoryForTeam is mostly the same as NewUserStory but assigns it to a team
-func NewUserStoryForTeam(c *Client, name, description, project, team string, feature *string) (UserStory, error) {
-	us := UserStory{
-		client:      c,
-		Name:        name,
-		Description: description,
-	}
-	c.debugLog(fmt.Sprintf("Attempting to Get Project: %s", project))
-	p, err := c.GetProject(project)
+// SetProject adds a project to a user story
+func (us *UserStory) SetProject(project string) error {
+	us.client.debugLog(fmt.Sprintf("Attempting to Get Team: %s", project))
+	p, err := us.client.GetProject(project)
 	if err != nil {
-		return UserStory{}, err
-	}
-	c.debugLog(fmt.Sprintf("Attempting to Get Team: %s", team))
-	t, err := c.GetTeam(team)
-	if err != nil {
-		return UserStory{}, err
-	}
-	if feature != nil {
-		c.debugLog(fmt.Sprintf("Attempting to Get Feature: %s", *feature))
-		f, err := c.GetFeature(*feature)
-		if err != nil {
-			return UserStory{}, err
-		}
-		us.Feature = &f
+		return err
 	}
 	us.Project = &p
+	return nil
+}
+
+// SetTeam adds a team to a user story
+func (us *UserStory) SetTeam(team string) error {
+	us.client.debugLog(fmt.Sprintf("Attempting to Get Team: %s", team))
+	t, err := us.client.GetTeam(team)
+	if err != nil {
+		return err
+	}
 	us.Team = &t
-	return us, nil
+	return nil
+}
+
+// SetFeature adds a feature to a user story
+func (us *UserStory) SetFeature(feature string) error {
+	us.client.debugLog(fmt.Sprintf("Attempting to Get Feature: %s", feature))
+	f, err := us.client.GetFeature(feature)
+	if err != nil {
+		return err
+	}
+	us.Feature = &f
+	return nil
 }
 
 // GetUserStories will return all user stories
