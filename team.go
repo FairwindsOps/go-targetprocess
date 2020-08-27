@@ -55,6 +55,9 @@ func (c *Client) GetTeam(name string) (Team, error) {
 	if err != nil {
 		return ret, errors.Wrap(err, fmt.Sprintf("error getting team with name '%s'", name))
 	}
+	if len(out.Items) < 1 {
+		return ret, fmt.Errorf("no items found")
+	}
 	ret = out.Items[0]
 	ret.client = c
 	return ret, nil
