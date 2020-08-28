@@ -22,7 +22,7 @@ import (
 
 // Team matches up with a targetprocess Team
 type Team struct {
-	Client *Client `json:"-"`
+	client *Client
 
 	ID              int32         `json:"Id,omitempty"`
 	Name            string        `json:",omitempty"`
@@ -67,7 +67,7 @@ func (c *Client) GetTeam(name string) (Team, error) {
 func (t Team) NewUserStory(name, description, project string) (UserStory, error) {
 	us, err := NewUserStory(t.Client, name, description, project)
 	if err != nil {
-		return UserStory{}, nil
+		return UserStory{}, err
 	}
 	us.Team = &t
 	return us, nil

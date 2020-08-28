@@ -162,11 +162,10 @@ func (us UserStory) Create() (int32, error) {
 // NewUserStoryList returns a UserStoryList from a list of user stories.
 // Used for batch POSTing of UserStories
 func (c *Client) NewUserStoryList(list []UserStory) *UserStoryList {
-	ret := &UserStoryList{
+	return &UserStoryList{
 		client:  c,
 		Stories: list,
 	}
-	return ret
 }
 
 // Create posts a list of user stories to create them
@@ -184,7 +183,7 @@ func (usl UserStoryList) Create() ([]int32, error) {
 	}
 	client.debugLog("Successfully POSTed UserStoryList")
 
-	ret := []int32{}
+	var ret []int32
 	for _, story := range resp.Items {
 		ret = append(ret, story.ID)
 	}
