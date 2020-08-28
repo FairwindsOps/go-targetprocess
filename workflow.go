@@ -17,8 +17,6 @@ package targetprocess
 // Workflow contains metadata for the state of an Workflow. Collection of Workflows
 // form Workflow for Entity. For example, Bug has four Workflows by default: Open, Fixed, Invalid and Done
 type Workflow struct {
-	client *Client
-
 	ID      int32    `json:"Id,omitempty"`
 	Name    string   `json:",omitempty"`
 	Process *Process `json:",omitempty"`

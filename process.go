@@ -17,8 +17,6 @@ package targetprocess
 // Process contains metadata for the state of an Process. Collection of Processs
 // form Process for Entity. For example, Bug has four Processs by default: Open, Fixed, Invalid and Done
 type Process struct {
-	client *Client
-
 	ID          int32  `json:"Id,omitempty"`
 	Name        string `json:",omitempty"`
 	Description string `json:",omitempty"`

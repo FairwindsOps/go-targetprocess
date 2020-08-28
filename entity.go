@@ -17,8 +17,6 @@ package targetprocess
 // EntityState contains metadata for the state of an Entity. Collection of EntityStates
 // form Workflow for Entity. For example, Bug has four EntityStates by default: Open, Fixed, Invalid and Done
 type EntityState struct {
-	client *Client
-
 	ID                int32        `json:"Id,omitempty"`
 	Name              string       `json:",omitempty"`
 	NumericPriority   float64      `json:",omitempty"`
