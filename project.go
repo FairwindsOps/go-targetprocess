@@ -39,6 +39,7 @@ type Project struct {
 	IsActive        bool          `json:",omitempty"`
 	Abbreviation    string        `json:",omitempty"`
 	Color           string        `json:",omitempty"`
+	Process         *Process      `json:",omitempty"`
 }
 
 // ProjectResponse is a representation of the http response for a group of Projects

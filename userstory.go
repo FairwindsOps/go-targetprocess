@@ -105,16 +105,6 @@ func (us *UserStory) SetFeature(feature string) error {
 	return nil
 }
 
-// SetEntityState sets the EntityState for a user story
-func (us *UserStory) SetEntityState(state string) error {
-	e, err := us.client.GetEntityState(state)
-	if err != nil {
-		return err
-	}
-	us.EntityState = &e
-	return nil
-}
-
 // GetUserStories will return all user stories
 //
 // Use with caution if you have a lot and are not setting the MaxPerPage to a high number

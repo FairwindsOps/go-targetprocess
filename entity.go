@@ -14,20 +14,20 @@
 
 package targetprocess
 
-import (
-	"fmt"
-
-	"github.com/pkg/errors"
-)
-
 // EntityState contains metadata for the state of an Entity. Collection of EntityStates
 // form Workflow for Entity. For example, Bug has four EntityStates by default: Open, Fixed, Invalid and Done
 type EntityState struct {
 	client *Client
 
-	ID              int32   `json:"Id,omitempty"`
-	Name            string  `json:",omitempty"`
-	NumericPriority float64 `json:",omitempty"`
+	ID                int32        `json:"Id,omitempty"`
+	Name              string       `json:",omitempty"`
+	NumericPriority   float64      `json:",omitempty"`
+	ParentEntityState *EntityState `json:",omitempty"`
+	Process           *Process     `json:",omitempty"`
+	IsInital          bool         `json:",omitempty"`
+	IsFinal           bool         `json:",omitempty"`
+	IsPlanned         bool         `json:",omitempty"`
+	IsCommentRequired bool         `json:",omitempty"`
 }
 
 // EntityStateResponse is a representation of the http response for a group of EntityStates
@@ -37,22 +37,24 @@ type EntityStateResponse struct {
 	Prev  string
 }
 
-// GetEntityState will return an EntityState object from a name. Returns an error if not found.
-func (c *Client) GetEntityState(name string) (EntityState, error) {
-	c.debugLog(fmt.Sprintf("attempting to get EntityState: %s", name))
-	ret := EntityState{}
+// GetEntityStates will return all EntityStates
+func (c *Client) GetEntityStates(filters ...QueryFilter) ([]EntityState, error) {
+	var ret []EntityState
 	out := EntityStateResponse{}
-	err := c.Get(&out, "EntityState", nil,
-		Where(fmt.Sprintf("Name eq '%s'", name)),
-		First(),
-	)
+
+	err := c.Get(&out, "EntityState", nil, filters...)
 	if err != nil {
-		return EntityState{}, errors.Wrap(err, fmt.Sprintf("error getting EntityState with name '%s'", name))
+		return nil, err
 	}
-	if len(out.Items) < 1 {
-		return ret, fmt.Errorf("no items found")
+	ret = append(ret, out.Items...)
+	for out.Next != "" {
+		innerOut := EntityStateResponse{}
+		err := c.GetNext(&innerOut, out.Next)
+		if err != nil {
+			return ret, err
+		}
+		ret = append(ret, innerOut.Items...)
+		out = innerOut
 	}
-	ret = out.Items[0]
-	ret.client = c
 	return ret, nil
 }
