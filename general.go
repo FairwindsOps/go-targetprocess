@@ -17,15 +17,6 @@ package targetprocess
 // DateTime currently does nothing special but will represent the TP DateTime objects
 type DateTime string
 
-// CustomField are user defined in TargetProcess and are arbitrarily set for many different
-// resource types
-type CustomField struct {
-	ID    int32       `json:"Id,omitempty"`
-	Type  string      `json:",omitempty"`
-	Name  string      `json:",omitempty"`
-	Value interface{} `json:",omitempty"`
-}
-
 // AssignedTeams is used in UserStories and potentially other places.
 // The AssignedTeams section of a UserStory response replaces the deprecated usage of the Team field
 type AssignedTeams struct {
