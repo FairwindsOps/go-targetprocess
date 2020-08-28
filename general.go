@@ -26,14 +26,6 @@ type CustomField struct {
 	Value interface{} `json:",omitempty"`
 }
 
-// EntityState contains metadata for the state of an Entity. Collection of EntityStates
-// form Workflow for Entity. For example, Bug has four EntityStates by default: Open, Fixed, Invalid and Done
-type EntityState struct {
-	ID              int32   `json:"Id,omitempty"`
-	Name            string  `json:",omitempty"`
-	NumericPriority float64 `json:",omitempty"`
-}
-
 // AssignedTeams is used in UserStories and potentially other places.
 // The AssignedTeams section of a UserStory response replaces the deprecated usage of the Team field
 type AssignedTeams struct {

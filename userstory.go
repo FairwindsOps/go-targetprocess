@@ -97,12 +97,21 @@ func (us *UserStory) SetTeam(team string) error {
 
 // SetFeature sets the Feature field for a user story
 func (us *UserStory) SetFeature(feature string) error {
-	us.client.debugLog(fmt.Sprintf("Attempting to Get Feature: %s", feature))
 	f, err := us.client.GetFeature(feature)
 	if err != nil {
 		return err
 	}
 	us.Feature = &f
+	return nil
+}
+
+// SetEntityState sets the EntityState for a user story
+func (us *UserStory) SetEntityState(state string) error {
+	e, err := us.client.GetEntityState(state)
+	if err != nil {
+		return err
+	}
+	us.EntityState = &e
 	return nil
 }
 

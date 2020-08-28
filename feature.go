@@ -66,6 +66,7 @@ func (c *Client) GetFeatures(filters ...QueryFilter) ([]Feature, error) {
 // GetFeature will return a single feature based on its name. If somehow there are projects with the same name,
 // this will only return the first one.
 func (c *Client) GetFeature(name string) (Feature, error) {
+	c.debugLog(fmt.Sprintf("attempting to get feature: %s", name))
 	ret := Feature{}
 	out := FeatureResponse{}
 	err := c.Get(&out, "Feature", nil,

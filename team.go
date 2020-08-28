@@ -22,7 +22,7 @@ import (
 
 // Team matches up with a targetprocess Team
 type Team struct {
-	client *Client
+	Client *Client `json:"-"`
 
 	ID              int32         `json:"Id,omitempty"`
 	Name            string        `json:",omitempty"`
@@ -59,13 +59,13 @@ func (c *Client) GetTeam(name string) (Team, error) {
 		return ret, fmt.Errorf("no items found")
 	}
 	ret = out.Items[0]
-	ret.client = c
+	ret.Client = c
 	return ret, nil
 }
 
 // NewUserStory will make a UserStory assigned to the Team that this method is built off of
 func (t Team) NewUserStory(name, description, project string) (UserStory, error) {
-	us, err := NewUserStory(t.client, name, description, project)
+	us, err := NewUserStory(t.Client, name, description, project)
 	if err != nil {
 		return UserStory{}, nil
 	}
