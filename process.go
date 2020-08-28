@@ -14,13 +14,6 @@
 
 package targetprocess
 
-import (
-	"encoding/json"
-	"fmt"
-
-	"github.com/pkg/errors"
-)
-
 // Process contains metadata for the state of an Process. Collection of Processs
 // form Process for Entity. For example, Bug has four Processs by default: Open, Fixed, Invalid and Done
 type Process struct {
@@ -36,28 +29,6 @@ type ProcessResponse struct {
 	Items []Process
 	Next  string
 	Prev  string
-}
-
-// GetProcess will return an Process object from a name. Returns an error if not found.
-func (c *Client) GetProcess(name string) (Process, error) {
-	c.debugLog(fmt.Sprintf("attempting to get Process: %s", name))
-	ret := Process{}
-	out := ProcessResponse{}
-	err := c.Get(&out, "Process", nil,
-		Where(fmt.Sprintf("Name eq '%s'", name)),
-		First(),
-	)
-	if err != nil {
-		return Process{}, errors.Wrap(err, fmt.Sprintf("error getting Process with name '%s'", name))
-	}
-	if len(out.Items) < 1 {
-		return ret, fmt.Errorf("no items found")
-	}
-	data, _ := json.Marshal(out.Items[0])
-	c.debugLog(fmt.Sprintf("gotProcess: %s", string(data)))
-	ret = out.Items[0]
-	ret.client = c
-	return ret, nil
 }
 
 // GetProcesses will return all Processs

@@ -14,13 +14,6 @@
 
 package targetprocess
 
-import (
-	"encoding/json"
-	"fmt"
-
-	"github.com/pkg/errors"
-)
-
 // Workflow contains metadata for the state of an Workflow. Collection of Workflows
 // form Workflow for Entity. For example, Bug has four Workflows by default: Open, Fixed, Invalid and Done
 type Workflow struct {
@@ -36,28 +29,6 @@ type WorkflowResponse struct {
 	Items []Workflow
 	Next  string
 	Prev  string
-}
-
-// GetWorkflow will return an Workflow object from a name. Returns an error if not found.
-func (c *Client) GetWorkflow(name string) (Workflow, error) {
-	c.debugLog(fmt.Sprintf("attempting to get Workflow: %s", name))
-	ret := Workflow{}
-	out := WorkflowResponse{}
-	err := c.Get(&out, "Workflow", nil,
-		Where(fmt.Sprintf("Name eq '%s'", name)),
-		First(),
-	)
-	if err != nil {
-		return Workflow{}, errors.Wrap(err, fmt.Sprintf("error getting Workflow with name '%s'", name))
-	}
-	if len(out.Items) < 1 {
-		return ret, fmt.Errorf("no items found")
-	}
-	data, _ := json.Marshal(out.Items[0])
-	c.debugLog(fmt.Sprintf("gotWorkflow: %s", string(data)))
-	ret = out.Items[0]
-	ret.client = c
-	return ret, nil
 }
 
 // GetWorkflows will return all Workflows

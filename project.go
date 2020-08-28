@@ -107,3 +107,17 @@ func (p Project) NewUserStory(name, description, team string) (UserStory, error)
 	us.Team = &t
 	return us, nil
 }
+
+// GetProcess returns the process associated with a project
+func (p Project) GetProcess() (*Process, error) {
+	processList, err := p.client.GetProcesses(
+		Where(fmt.Sprintf("Id eq %d", p.Process.ID)),
+	)
+	if err != nil {
+		return nil, err
+	}
+	if len(processList) != 1 {
+		return nil, fmt.Errorf("cannot determine process for project. got list: %v", processList)
+	}
+	return &processList[0], nil
+}
