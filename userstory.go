@@ -49,6 +49,12 @@ type UserStory struct {
 	Feature             *Feature       `json:",omitempty"`
 }
 
+// UserStoryList is a list of user stories. Can be used to create multiple stories at once
+type UserStoryList struct {
+	client  *Client
+	Stories []UserStory `json:"Stories"`
+}
+
 // UserStoryResponse is a representation of the http response for a group of UserStories
 type UserStoryResponse struct {
 	Items []UserStory
@@ -151,4 +157,37 @@ func (us UserStory) Create() (int32, error) {
 	client.debugLog("Successfully POSTed UserStory")
 	client.debugLog(fmt.Sprintf("UserStory created. ID: %d", resp.ID))
 	return resp.ID, nil
+}
+
+// NewUserStoryList returns a UserStoryList from a list of user stories.
+// Used for batch POSTing of UserStories
+func (c *Client) NewUserStoryList(list []UserStory) *UserStoryList {
+	ret := &UserStoryList{
+		client:  c,
+		Stories: list,
+	}
+	return ret
+}
+
+// Create posts a list of user stories to create them
+func (usl UserStoryList) Create() ([]int32, error) {
+	client := usl.client
+	resp := &UserStoryResponse{}
+	body, err := json.Marshal(usl.Stories)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf("error marshaling POST body for UserStoryList %v", usl))
+	}
+	client.debugLog(fmt.Sprintf("Attempting to POST UserStory: %+v", usl))
+	err = client.Post(resp, "UserStories/bulk", nil, body)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf("error POSTing UserStoryList %v", usl))
+	}
+	client.debugLog("Successfully POSTed UserStoryList")
+
+	ret := []int32{}
+	for _, us := range resp.Items {
+		ret = append(ret, us.ID)
+	}
+	client.debugLog(fmt.Sprintf("User stories created. IDs: %v", ret))
+	return ret, nil
 }
