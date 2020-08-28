@@ -59,13 +59,13 @@ func (c *Client) GetTeam(name string) (Team, error) {
 		return ret, fmt.Errorf("no items found")
 	}
 	ret = out.Items[0]
-	ret.Client = c
+	ret.client = c
 	return ret, nil
 }
 
 // NewUserStory will make a UserStory assigned to the Team that this method is built off of
 func (t Team) NewUserStory(name, description, project string) (UserStory, error) {
-	us, err := NewUserStory(t.Client, name, description, project)
+	us, err := NewUserStory(t.client, name, description, project)
 	if err != nil {
 		return UserStory{}, err
 	}
