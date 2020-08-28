@@ -172,7 +172,9 @@ func (c *Client) NewUserStoryList(list []UserStory) *UserStoryList {
 // Create posts a list of user stories to create them
 func (usl UserStoryList) Create() ([]int32, error) {
 	client := usl.client
-	resp := &UserStoryResponse{}
+	resp := UserStoryResponse{}{
+		ID int32 `json:"Id"`
+	}{}
 	body, err := json.Marshal(usl.Stories)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("error marshaling POST body for UserStoryList %v", usl))
@@ -183,11 +185,6 @@ func (usl UserStoryList) Create() ([]int32, error) {
 		return nil, errors.Wrap(err, fmt.Sprintf("error POSTing UserStoryList %v", usl))
 	}
 	client.debugLog("Successfully POSTed UserStoryList")
-
-	ret := []int32{}
-	for _, us := range resp.Items {
-		ret = append(ret, us.ID)
-	}
-	client.debugLog(fmt.Sprintf("User stories created. IDs: %v", ret))
-	return ret, nil
+	client.debugLog(fmt.Sprintf("User stories created. ID: %d", resp.ID))
+	return []int32{resp.ID}, nil
 }
