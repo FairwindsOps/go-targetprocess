@@ -98,7 +98,7 @@ func (p Project) NewUserStory(name, description, team string) (UserStory, error)
 		Name:        name,
 		Description: description,
 	}
-	p.client.debugLog(fmt.Sprintf("Attempting to Get Team: %s", team))
+	p.client.debugLog(fmt.Sprintf("[targetprocess] Attempting to Get Team: %s", team))
 	t, err := p.client.GetTeam(team)
 	if err != nil {
 		return UserStory{}, err

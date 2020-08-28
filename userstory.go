@@ -81,7 +81,7 @@ func NewUserStory(c *Client, name, description, project string) (UserStory, erro
 
 // SetProject sets the Project field for a user story
 func (us *UserStory) SetProject(project string) error {
-	us.client.debugLog(fmt.Sprintf("Attempting to Get Team: %s", project))
+	us.client.debugLog(fmt.Sprintf("[targetprocess] Attempting to Get Team: %s", project))
 	p, err := us.client.GetProject(project)
 	if err != nil {
 		return err
@@ -92,7 +92,7 @@ func (us *UserStory) SetProject(project string) error {
 
 // SetTeam sets the Team field for a user story
 func (us *UserStory) SetTeam(team string) error {
-	us.client.debugLog(fmt.Sprintf("Attempting to Get Team: %s", team))
+	us.client.debugLog(fmt.Sprintf("[targetprocess] Attempting to Get Team: %s", team))
 	t, err := us.client.GetTeam(team)
 	if err != nil {
 		return err
@@ -154,8 +154,8 @@ func (us UserStory) Create() (int32, error) {
 	if err != nil {
 		return 0, errors.Wrap(err, fmt.Sprintf("error POSTing UserStory %s", us.Name))
 	}
-	client.debugLog("Successfully POSTed UserStory")
-	client.debugLog(fmt.Sprintf("UserStory created. ID: %d", resp.ID))
+	client.debugLog("[targetprocess] Successfully POSTed UserStory")
+	client.debugLog(fmt.Sprintf("[targetprocess] UserStory created. ID: %d", resp.ID))
 	return resp.ID, nil
 }
 
@@ -176,17 +176,17 @@ func (usl UserStoryList) Create() ([]int32, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("error marshaling POST body for UserStoryList %v", usl))
 	}
-	client.debugLog(fmt.Sprintf("Attempting to POST UserStory: %+v", usl))
+	client.debugLog(fmt.Sprintf("[targetprocess] Attempting to POST UserStory: %+v", usl))
 	err = client.Post(resp, "UserStories/bulk", nil, body)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("error POSTing UserStoryList %v", usl))
 	}
-	client.debugLog("Successfully POSTed UserStoryList")
+	client.debugLog("[targetprocess] Successfully POSTed UserStoryList")
 
 	var ret []int32
 	for _, story := range resp.Items {
 		ret = append(ret, story.ID)
 	}
-	client.debugLog(fmt.Sprintf("User stories created with IDs: %v", ret))
+	client.debugLog(fmt.Sprintf("[targetprocess] User stories created with IDs: %v", ret))
 	return ret, nil
 }
