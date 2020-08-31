@@ -30,10 +30,10 @@ When doing local development it helps to have a separate project on your machine
 ```
 module github.com/example/foo
 
-replace github.com/FairwindsOps/go-targetprocess => /Users/example/Projects/go-targetprocess
+replace github.com/fairwindsops/go-targetprocess => /Users/example/Projects/go-targetprocess
 
 require (
-	github.com/FairwindsOps/go-targetprocess v0.0.0
+	github.com/fairwindsops/go-targetprocess v0.0.0
 )
 ```
 On the `replace` directive, modify the path after the `=>` to the location on your workstation where you made the copy of go-targetprocess.
