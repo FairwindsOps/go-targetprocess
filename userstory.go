@@ -46,6 +46,13 @@ type UserStory struct {
 	Team                *Team          `json:",omitempty"`
 	EntityState         *EntityState   `json:",omitempty"`
 	AssignedTeams       *AssignedTeams `json:",omitempty"`
+	Feature             *Feature       `json:",omitempty"`
+}
+
+// UserStoryList is a list of user stories. Can be used to create multiple stories at once
+type UserStoryList struct {
+	client  *Client
+	Stories []UserStory `json:"Stories"`
 }
 
 // UserStoryResponse is a representation of the http response for a group of UserStories
@@ -56,41 +63,52 @@ type UserStoryResponse struct {
 }
 
 // NewUserStory creates a new UserStory with the required fields of
-// name, description, and project
+// name, description, and project.
+// If more fields are required, use the Add<Field> method of UserStory to add them
 func NewUserStory(c *Client, name, description, project string) (UserStory, error) {
 	us := UserStory{
 		client:      c,
 		Name:        name,
 		Description: description,
 	}
-	p, err := c.GetProject(project)
+	err := us.SetProject(project)
 	if err != nil {
 		return UserStory{}, err
 	}
-	us.Project = &p
+
 	return us, nil
 }
 
-// NewUserStoryForTeam is mostly the same as NewUserStory but assigns it to a team
-func NewUserStoryForTeam(c *Client, name, description, project, team string) (UserStory, error) {
-	us := UserStory{
-		client:      c,
-		Name:        name,
-		Description: description,
-	}
-	c.debugLog(fmt.Sprintf("Attempting to Get Project: %s", project))
-	p, err := c.GetProject(project)
+// SetProject sets the Project field for a user story
+func (us *UserStory) SetProject(project string) error {
+	us.client.debugLog(fmt.Sprintf("[targetprocess] Attempting to Get Team: %s", project))
+	p, err := us.client.GetProject(project)
 	if err != nil {
-		return UserStory{}, err
-	}
-	c.debugLog(fmt.Sprintf("Attempting to Get Team: %s", team))
-	t, err := c.GetTeam(team)
-	if err != nil {
-		return UserStory{}, err
+		return err
 	}
 	us.Project = &p
+	return nil
+}
+
+// SetTeam sets the Team field for a user story
+func (us *UserStory) SetTeam(team string) error {
+	us.client.debugLog(fmt.Sprintf("[targetprocess] Attempting to Get Team: %s", team))
+	t, err := us.client.GetTeam(team)
+	if err != nil {
+		return err
+	}
 	us.Team = &t
-	return us, nil
+	return nil
+}
+
+// SetFeature sets the Feature field for a user story
+func (us *UserStory) SetFeature(feature string) error {
+	f, err := us.client.GetFeature(feature)
+	if err != nil {
+		return err
+	}
+	us.Feature = &f
+	return nil
 }
 
 // GetUserStories will return all user stories
@@ -136,7 +154,39 @@ func (us UserStory) Create() (int32, error) {
 	if err != nil {
 		return 0, errors.Wrap(err, fmt.Sprintf("error POSTing UserStory %s", us.Name))
 	}
-	client.debugLog("Successfully POSTed UserStory")
-	client.debugLog(fmt.Sprintf("UserStory created. ID: %d", resp.ID))
+	client.debugLog("[targetprocess] Successfully POSTed UserStory")
+	client.debugLog(fmt.Sprintf("[targetprocess] UserStory created. ID: %d", resp.ID))
 	return resp.ID, nil
+}
+
+// NewUserStoryList returns a UserStoryList from a list of user stories.
+// Used for batch POSTing of UserStories
+func (c *Client) NewUserStoryList(list []UserStory) *UserStoryList {
+	return &UserStoryList{
+		client:  c,
+		Stories: list,
+	}
+}
+
+// Create posts a list of user stories to create them
+func (usl UserStoryList) Create() ([]int32, error) {
+	client := usl.client
+	resp := &UserStoryResponse{}
+	body, err := json.Marshal(usl.Stories)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf("error marshaling POST body for UserStoryList %v", usl))
+	}
+	client.debugLog(fmt.Sprintf("[targetprocess] Attempting to POST UserStory: %+v", usl))
+	err = client.Post(resp, "UserStories/bulk", nil, body)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf("error POSTing UserStoryList %v", usl))
+	}
+	client.debugLog("[targetprocess] Successfully POSTed UserStoryList")
+
+	var ret []int32
+	for _, story := range resp.Items {
+		ret = append(ret, story.ID)
+	}
+	client.debugLog(fmt.Sprintf("[targetprocess] User stories created with IDs: %v", ret))
+	return ret, nil
 }

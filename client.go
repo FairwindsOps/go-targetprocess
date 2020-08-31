@@ -190,6 +190,7 @@ func (c *Client) do(out interface{}, req *http.Request, urlPath string) error {
 	if err != nil {
 		return errors.Wrapf(err, "HTTP Read error on response for %s", urlPath)
 	}
+	c.debugLog(fmt.Sprintf("[targetprocess] raw response: %s", string(b)))
 	err = json.Unmarshal(b, out)
 	if err != nil {
 		return errors.Wrapf(err, "JSON decode failed on %s:\n%s", urlPath, string(b))

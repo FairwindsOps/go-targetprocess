@@ -39,6 +39,7 @@ type Project struct {
 	IsActive        bool          `json:",omitempty"`
 	Abbreviation    string        `json:",omitempty"`
 	Color           string        `json:",omitempty"`
+	Process         *Process      `json:",omitempty"`
 }
 
 // ProjectResponse is a representation of the http response for a group of Projects
@@ -82,6 +83,9 @@ func (c *Client) GetProject(name string) (Project, error) {
 	if err != nil {
 		return Project{}, errors.Wrap(err, fmt.Sprintf("error getting project with name '%s'", name))
 	}
+	if len(out.Items) < 1 {
+		return ret, fmt.Errorf("no items found")
+	}
 	ret = out.Items[0]
 	ret.client = c
 	return ret, nil
@@ -94,7 +98,7 @@ func (p Project) NewUserStory(name, description, team string) (UserStory, error)
 		Name:        name,
 		Description: description,
 	}
-	p.client.debugLog(fmt.Sprintf("Attempting to Get Team: %s", team))
+	p.client.debugLog(fmt.Sprintf("[targetprocess] Attempting to Get Team: %s", team))
 	t, err := p.client.GetTeam(team)
 	if err != nil {
 		return UserStory{}, err
@@ -102,4 +106,18 @@ func (p Project) NewUserStory(name, description, team string) (UserStory, error)
 	us.Project = &p
 	us.Team = &t
 	return us, nil
+}
+
+// GetProcess returns the process associated with a project
+func (p Project) GetProcess() (*Process, error) {
+	processList, err := p.client.GetProcesses(
+		Where(fmt.Sprintf("Id eq %d", p.Process.ID)),
+	)
+	if err != nil {
+		return nil, err
+	}
+	if len(processList) != 1 {
+		return nil, fmt.Errorf("cannot determine process for project. got list: %v", processList)
+	}
+	return &processList[0], nil
 }

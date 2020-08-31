@@ -55,24 +55,20 @@ func (c *Client) GetTeam(name string) (Team, error) {
 	if err != nil {
 		return ret, errors.Wrap(err, fmt.Sprintf("error getting team with name '%s'", name))
 	}
+	if len(out.Items) < 1 {
+		return ret, fmt.Errorf("no items found")
+	}
 	ret = out.Items[0]
 	ret.client = c
 	return ret, nil
 }
 
-// NewUserStory will make a UserStory for assigned to the Team that this method is built off of and for the given Project
+// NewUserStory will make a UserStory assigned to the Team that this method is built off of
 func (t Team) NewUserStory(name, description, project string) (UserStory, error) {
-	us := UserStory{
-		client:      t.client,
-		Name:        name,
-		Description: description,
-	}
-	t.client.debugLog(fmt.Sprintf("Attempting to Get Project: %s", project))
-	p, err := t.client.GetProject(project)
+	us, err := NewUserStory(t.client, name, description, project)
 	if err != nil {
 		return UserStory{}, err
 	}
-	us.Project = &p
 	us.Team = &t
 	return us, nil
 }
