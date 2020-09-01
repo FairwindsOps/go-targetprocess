@@ -77,7 +77,7 @@ func (c *Client) GetFeature(name string) (Feature, error) {
 		return Feature{}, errors.Wrap(err, fmt.Sprintf("error getting feature with name '%s'", name))
 	}
 	if len(out.Items) < 1 {
-		return ret, fmt.Errorf("no items found")
+		return ret, fmt.Errorf("no features found")
 	}
 	ret = out.Items[0]
 	ret.client = c

@@ -22,7 +22,7 @@ type EntityState struct {
 	NumericPriority   float64      `json:",omitempty"`
 	ParentEntityState *EntityState `json:",omitempty"`
 	Process           *Process     `json:",omitempty"`
-	IsInital          bool         `json:",omitempty"`
+	IsInitial         bool         `json:",omitempty"`
 	IsFinal           bool         `json:",omitempty"`
 	IsPlanned         bool         `json:",omitempty"`
 	IsCommentRequired bool         `json:",omitempty"`

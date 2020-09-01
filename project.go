@@ -84,7 +84,7 @@ func (c *Client) GetProject(name string) (Project, error) {
 		return Project{}, errors.Wrap(err, fmt.Sprintf("error getting project with name '%s'", name))
 	}
 	if len(out.Items) < 1 {
-		return ret, fmt.Errorf("no items found")
+		return ret, fmt.Errorf("no projects found")
 	}
 	ret = out.Items[0]
 	ret.client = c

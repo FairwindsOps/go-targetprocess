@@ -43,7 +43,7 @@ func (c *Client) GetUsers(filters ...QueryFilter) ([]User, error) {
 	var ret []User
 	out := UserResponse{}
 
-	err := c.Get(&out, "Users", nil, filters...)
+	err := c.Get(&out, "User", nil, filters...)
 	if err != nil {
 		return nil, err
 	}

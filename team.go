@@ -56,10 +56,33 @@ func (c *Client) GetTeam(name string) (Team, error) {
 		return ret, errors.Wrap(err, fmt.Sprintf("error getting team with name '%s'", name))
 	}
 	if len(out.Items) < 1 {
-		return ret, fmt.Errorf("no items found")
+		return ret, fmt.Errorf("no teams found")
 	}
 	ret = out.Items[0]
 	ret.client = c
+	return ret, nil
+}
+
+// GetTeams will return a list of teams
+func (c *Client) GetTeams(filters ...QueryFilter) ([]Team, error) {
+	var ret []Team
+	out := TeamResponse{}
+
+	err := c.Get(&out, "Team", nil, filters...)
+	if err != nil {
+		return nil, err
+	}
+	ret = append(ret, out.Items...)
+	for out.Next != "" {
+		innerOut := TeamResponse{}
+		err := c.GetNext(&innerOut, out.Next)
+		if err != nil {
+			return ret, err
+		}
+		ret = append(ret, innerOut.Items...)
+		out = innerOut
+	}
+
 	return ret, nil
 }
 
