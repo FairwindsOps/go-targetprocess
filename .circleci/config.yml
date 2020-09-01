@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  rok8s-scripts: fairwinds/rok8s-scripts@11
+
 jobs:
   test:
     working_directory: /go/src/github.com/fairwindsops/go-targetprocess
@@ -29,5 +32,11 @@ workflows:
           filters:
             branches:
               only: /.*/
+            tags:
+              only: /v.*/
+      - rok8s-scripts/github_release:
+          filters:
+            branches:
+              ignore: /.*/
             tags:
               only: /v.*/
