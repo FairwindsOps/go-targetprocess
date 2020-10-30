@@ -54,7 +54,7 @@ func MaxPerPage(count int) QueryFilter {
 // entire result set, such as getting the average Effort value
 // across multiple items.
 //
-// It is important to not that this changes the output json and
+// It is important to note that this changes the output json and
 // therefore you will need to adjust your receiving struct
 func Result(query string) QueryFilter {
 	return func(values url.Values) (url.Values, error) {
