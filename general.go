@@ -30,7 +30,7 @@ type TeamAssignment struct {
 	Team      *Team    `json:",omitempty"`
 }
 
-// UserAssignment has it's own unique Id and also includes a reference to a user, which also has an Id
+// UserAssignment has its own unique Id and also includes a reference to a user, which also has an Id
 type UserAssignment struct {
 	User
 }
