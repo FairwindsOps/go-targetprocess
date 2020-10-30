@@ -36,8 +36,11 @@ const (
 // Client is the API client for Targetprocess. Create this using NewClient.
 // This can also be constructed manually but it isn't recommended.
 type Client struct {
-	// BaseURL is the base URL for API requests.
-	BaseURL *url.URL
+	// baseURL is the base URL for v1 API requests.
+	baseURL *url.URL
+
+	// baseURLReadOnly is the base URL for v2 API requests.
+	baseURLReadOnly *url.URL
 
 	// Client is the HTTP client to use for communication.
 	Client *http.Client
@@ -74,16 +77,22 @@ func NewClient(account, token string) *Client {
 	c := http.DefaultClient
 	c.Timeout = 15 * time.Second
 	baseURLString := fmt.Sprintf("https://%s.tpondemand.com/api/v1/", account)
+	baseURLReadOnlyString := fmt.Sprintf("https://%s.tpondemand.com/api/v2/", account)
 	baseURL, err := url.Parse(baseURLString)
 	if err != nil {
 		panic(err)
 	}
+	baseURLReadOnly, err := url.Parse(baseURLReadOnlyString)
+	if err != nil {
+		panic(err)
+	}
 	return &Client{
-		BaseURL:   baseURL,
-		Client:    c,
-		Token:     token,
-		UserAgent: userAgent,
-		ctx:       context.Background(),
+		baseURL:         baseURL,
+		baseURLReadOnly: baseURLReadOnly,
+		Client:          c,
+		Token:           token,
+		UserAgent:       userAgent,
+		ctx:             context.Background(),
 	}
 }
 
@@ -101,7 +110,7 @@ func (c *Client) Get(out interface{}, entityType string, values url.Values, filt
 	if err != nil {
 		return errors.Wrapf(err, "Error parsing entity type: %s", entityType)
 	}
-	u := c.BaseURL.ResolveReference(rel)
+	u := c.baseURLReadOnly.ResolveReference(rel)
 
 	if values == nil {
 		values = url.Values{}
@@ -115,11 +124,11 @@ func (c *Client) Get(out interface{}, entityType string, values url.Values, filt
 	}
 	values = c.defaultParams(values)
 
-	c.debugLog("[targetprocess] GET %s%s?%s", c.BaseURL, entityType, values.Encode())
+	c.debugLog("[targetprocess] GET %s%s?%s", c.baseURLReadOnly, entityType, values.Encode())
 	fullURL := fmt.Sprintf("%s?%s", u.String(), values.Encode())
 	req, err := http.NewRequest("GET", fullURL, nil)
 	if err != nil {
-		return errors.Wrapf(err, "Invalid GET request: %s/%s", c.BaseURL, entityType)
+		return errors.Wrapf(err, "Invalid GET request: %s/%s", c.baseURLReadOnly, entityType)
 	}
 	return c.do(out, req, entityType)
 }
@@ -130,13 +139,19 @@ func (c *Client) GetNext(out interface{}, nextURL string) error {
 	if err != nil {
 		return errors.Wrapf(err, "Invalid Next URL: %s", nextURL)
 	}
+
+	// The v1 and v2 API return differently formatted Next urls, so we need to be sure the Path ends with "/"
+	if !strings.HasSuffix(prevFull.Path, "/") {
+		prevFull.Path += "/"
+	}
+
 	splitPath := strings.Split(prevFull.EscapedPath(), "/")
 	entityType := splitPath[len(splitPath)-2]
-
 	entityURLType, err := url.Parse(entityType + "/")
 	if err != nil {
 		return errors.Wrapf(err, "Invalid Next URL Entity Type: %s", entityURLType)
 	}
+
 	return c.Get(out, entityType, prevFull.Query())
 }
 
@@ -146,40 +161,41 @@ func (c *Client) Post(out interface{}, entityType string, values url.Values, bod
 	if err != nil {
 		return errors.Wrapf(err, "Error parsing entity type: %s", entityType)
 	}
-	u := c.BaseURL.ResolveReference(rel)
+	u := c.baseURL.ResolveReference(rel)
 
 	if values == nil {
 		values = url.Values{}
 	}
 	values = c.defaultParams(values)
 
-	c.debugLog("[targetprocess] POST %s/%s?%s", c.BaseURL, entityType, values.Encode())
+	c.debugLog("[targetprocess] POST %s/%s?%s", c.baseURL, entityType, values.Encode())
 	fullURL := fmt.Sprintf("%s?%s", u.String(), values.Encode())
 
 	req, err := http.NewRequest("POST", fullURL, bytes.NewBuffer(body))
 	if err != nil {
-		return errors.Wrapf(err, "Invalid POST request: %s/%s", c.BaseURL, entityType)
+		return errors.Wrapf(err, "Invalid POST request: %s/%s", c.baseURL, entityType)
 	}
 	return c.do(out, req, entityType)
 }
 
 func (c *Client) do(out interface{}, req *http.Request, urlPath string) error {
+	noParameterURL := fmt.Sprintf("%s://%s%s", req.URL.Scheme, req.URL.Host, req.URL.Path)
+
 	// Set the headers that will be required for every request
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Accept", "application/json")
 	if c.UserAgent != "" {
 		req.Header.Add("User-Agent", c.UserAgent)
 	}
-
 	resp, err := c.Client.Do(req)
 	if err != nil {
-		return errors.Wrapf(err, "HTTP request failure on %s/%s", c.BaseURL, urlPath)
+		return errors.Wrapf(err, "HTTP request failure on %s", noParameterURL)
 	}
 
 	// Empty the body and close it to reuse the Transport
 	defer func() {
-		io.Copy(ioutil.Discard, resp.Body) // nolint:golint,errcheck
-		resp.Body.Close()
+		_, _ = io.Copy(ioutil.Discard, resp.Body) // nolint:golint,errcheck
+		_ = resp.Body.Close()
 	}()
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {

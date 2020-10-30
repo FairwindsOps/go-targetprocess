@@ -25,28 +25,29 @@ import (
 type UserStory struct {
 	client *Client
 
-	ID                  int32          `json:"Id,omitempty"`
-	Name                string         `json:",omitempty"`
-	Description         string         `json:",omitempty"`
-	StartDate           DateTime       `json:",omitempty"`
-	EndDate             DateTime       `json:",omitempty"`
-	CreateDate          DateTime       `json:",omitempty"`
-	ModifyDate          DateTime       `json:",omitempty"`
-	NumericPriority     float64        `json:",omitempty"`
-	CustomFields        []CustomField  `json:",omitempty"`
-	Effort              float32        `json:",omitempty"`
-	EffortCompleted     float32        `json:",omitempty"`
-	EffortToDo          float32        `json:",omitempty"`
-	Project             *Project       `json:",omitempty"`
-	Progress            float32        `json:",omitempty"`
-	TimeSpent           float32        `json:",omitempty"`
-	TimeRemain          float32        `json:",omitempty"`
-	LastStateChangeDate DateTime       `json:",omitempty"`
-	InitialEstimate     float32        `json:",omitempty"`
-	Team                *Team          `json:",omitempty"`
-	EntityState         *EntityState   `json:",omitempty"`
-	AssignedTeams       *AssignedTeams `json:",omitempty"`
-	Feature             *Feature       `json:",omitempty"`
+	ID                  int32           `json:"Id,omitempty"`
+	Name                string          `json:",omitempty"`
+	Description         string          `json:",omitempty"`
+	StartDate           DateTime        `json:",omitempty"`
+	EndDate             DateTime        `json:",omitempty"`
+	CreateDate          DateTime        `json:",omitempty"`
+	ModifyDate          DateTime        `json:",omitempty"`
+	NumericPriority     float64         `json:",omitempty"`
+	CustomFields        []CustomField   `json:",omitempty"`
+	Effort              float32         `json:",omitempty"`
+	EffortCompleted     float32         `json:",omitempty"`
+	EffortToDo          float32         `json:",omitempty"`
+	Project             *Project        `json:",omitempty"`
+	Progress            float32         `json:",omitempty"`
+	TimeSpent           float32         `json:",omitempty"`
+	TimeRemain          float32         `json:",omitempty"`
+	LastStateChangeDate DateTime        `json:",omitempty"`
+	InitialEstimate     float32         `json:",omitempty"`
+	ResponsibleTeam     *TeamAssignment `json:",omitempty"`
+	Team                *Team           `json:",omitempty"`
+	EntityState         *EntityState    `json:",omitempty"`
+	AssignedUser        *AssignedUser   `json:",omitempty"`
+	Feature             *Feature        `json:",omitempty"`
 }
 
 // UserStoryList is a list of user stories. Can be used to create multiple stories at once
@@ -116,7 +117,8 @@ func (us *UserStory) SetFeature(feature string) error {
 // Use with caution if you have a lot and are not setting the MaxPerPage to a high number
 // as it could cause a lot of requests to the API and may take a long time.
 // If you know you have a lot you may want to include the QueryFilter MaxPerPage
-func (c *Client) GetUserStories(filters ...QueryFilter) ([]UserStory, error) {
+//
+func (c *Client) GetUserStories(page bool, filters ...QueryFilter) ([]UserStory, error) {
 	var ret []UserStory
 	out := UserStoryResponse{}
 
@@ -125,14 +127,16 @@ func (c *Client) GetUserStories(filters ...QueryFilter) ([]UserStory, error) {
 		return nil, err
 	}
 	ret = append(ret, out.Items...)
-	for out.Next != "" {
-		innerOut := UserStoryResponse{}
-		err := c.GetNext(&innerOut, out.Next)
-		if err != nil {
-			return ret, err
+	if page {
+		for out.Next != "" {
+			innerOut := UserStoryResponse{}
+			err := c.GetNext(&innerOut, out.Next)
+			if err != nil {
+				return ret, err
+			}
+			ret = append(ret, innerOut.Items...)
+			out = innerOut
 		}
-		ret = append(ret, innerOut.Items...)
-		out = innerOut
 	}
 	return ret, nil
 }
