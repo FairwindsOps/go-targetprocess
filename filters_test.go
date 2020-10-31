@@ -28,10 +28,13 @@ func matchedURLValues(expected, got url.Values, key string) (bool, string, strin
 }
 
 func ExampleFirst() {
-	tpClient := NewClient("accountName", "superSecretToken")
+	tpClient, err := NewClient("accountName", "superSecretToken")
+	if err != nil {
+		fmt.Println("Error creating tp client:", err)
+		os.Exit(1)
+	}
 	userStories, err := tpClient.GetUserStories(
 		false,
-		Where("EntityState.Name == 'Done'"),
 		First(),
 	)
 	if err != nil {
@@ -71,7 +74,11 @@ func TestFirst(t *testing.T) {
 }
 
 func ExampleMaxPerPage() {
-	tpClient := NewClient("accountName", "superSecretToken")
+	tpClient, err := NewClient("accountName", "superSecretToken")
+	if err != nil {
+		fmt.Println("Error creating tp client:", err)
+		os.Exit(1)
+	}
 	userStories, err := tpClient.GetUserStories(
 		false,
 		MaxPerPage(200),
@@ -121,11 +128,15 @@ func TestMaxPerPage(t *testing.T) {
 }
 
 func ExampleResult() {
-	tpClient := NewClient("accountName", "superSecretToken")
+	tpClient, err := NewClient("accountName", "superSecretToken")
+	if err != nil {
+		fmt.Println("Error creating tp client:", err)
+		os.Exit(1)
+	}
 	response := struct {
 		EffortSum float64 `json:",omitempty"`
 	}{}
-	err := tpClient.Get(&response,
+	err = tpClient.Get(&response,
 		"UserStories",
 		nil,
 		Result("effortSum:sum(effort)"),
@@ -175,7 +186,11 @@ func TestResult(t *testing.T) {
 }
 
 func ExampleSelect() {
-	tpClient := NewClient("accountName", "superSecretToken")
+	tpClient, err := NewClient("accountName", "superSecretToken")
+	if err != nil {
+		fmt.Println("Error creating tp client:", err)
+		os.Exit(1)
+	}
 	userStories, err := tpClient.GetUserStories(
 		false,
 		Select("name,id"),
@@ -225,7 +240,11 @@ func TestSelect(t *testing.T) {
 }
 
 func ExampleWhere() {
-	tpClient := NewClient("accountName", "superSecretToken")
+	tpClient, err := NewClient("accountName", "superSecretToken")
+	if err != nil {
+		fmt.Println("Error creating tp client:", err)
+		os.Exit(1)
+	}
 	userStories, err := tpClient.GetUserStories(
 		false,
 		Where("EntityState.Name == 'Done'"),

@@ -73,18 +73,18 @@ type logger interface {
 //
 // token is your user access token taken from your account settings
 // see here: https://dev.targetprocess.com/docs/authentication#token-authentication
-func NewClient(account, token string) *Client {
+func NewClient(account, token string) (*Client, error) {
 	c := http.DefaultClient
 	c.Timeout = 15 * time.Second
 	baseURLString := fmt.Sprintf("https://%s.tpondemand.com/api/v1/", account)
 	baseURLReadOnlyString := fmt.Sprintf("https://%s.tpondemand.com/api/v2/", account)
 	baseURL, err := url.Parse(baseURLString)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	baseURLReadOnly, err := url.Parse(baseURLReadOnlyString)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	return &Client{
 		baseURL:         baseURL,
@@ -93,7 +93,7 @@ func NewClient(account, token string) *Client {
 		Token:           token,
 		UserAgent:       userAgent,
 		ctx:             context.Background(),
-	}
+	}, nil
 }
 
 // WithContext takes a context.Context, sets it as context on the client and returns
@@ -194,7 +194,7 @@ func (c *Client) do(out interface{}, req *http.Request, urlPath string) error {
 
 	// Empty the body and close it to reuse the Transport
 	defer func() {
-		_, _ = io.Copy(ioutil.Discard, resp.Body) // nolint:golint,errcheck
+		_, _ = io.Copy(ioutil.Discard, resp.Body)
 		_ = resp.Body.Close()
 	}()
 

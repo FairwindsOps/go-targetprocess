@@ -22,9 +22,13 @@ import (
 
 // Example of client.Get() for godoc
 func ExampleClient_Get() {
-	tpClient := NewClient("exampleaccount", "superSecretToken")
+	tpClient, err := NewClient("exampleaccount", "superSecretToken")
+	if err != nil {
+		fmt.Println("Failed to create tp client:", err)
+		os.Exit(1)
+	}
 	var response = UserResponse{}
-	err := tpClient.Get(response,
+	err = tpClient.Get(response,
 		"User",
 		nil)
 	if err != nil {
