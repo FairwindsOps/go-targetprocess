@@ -38,7 +38,7 @@ func First() QueryFilter {
 
 // MaxPerPage is how many results we will allow to return per page. Default enforced by the API is 25.
 // If a negative number is passed in it will be converted to a positive number. In the TP API, a negative
-// number has the same return as a positive, so we'll
+// number has the same return as a positive, but we convert any negative to positive anyway.
 func MaxPerPage(count int) QueryFilter {
 	return func(values url.Values) (url.Values, error) {
 		if count < 0 {
