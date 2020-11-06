@@ -33,6 +33,14 @@ const (
 	userAgent = "go-targetprocess"
 )
 
+var (
+	defaultClient *http.Client
+)
+
+func init() {
+	defaultClient = http.DefaultClient
+}
+
 // Client is the API client for Targetprocess. Create this using NewClient.
 // This can also be constructed manually but it isn't recommended.
 type Client struct {
@@ -74,7 +82,7 @@ type logger interface {
 // token is your user access token taken from your account settings
 // see here: https://dev.targetprocess.com/docs/authentication#token-authentication
 func NewClient(account, token string) (*Client, error) {
-	c := http.DefaultClient
+	c := defaultClient
 	c.Timeout = 15 * time.Second
 	baseURLString := fmt.Sprintf("https://%s.tpondemand.com/api/v1/", account)
 	baseURLReadOnlyString := fmt.Sprintf("https://%s.tpondemand.com/api/v2/", account)
@@ -216,7 +224,7 @@ func (c *Client) do(out interface{}, req *http.Request, urlPath string) error {
 
 func (c *Client) defaultParams(v url.Values) url.Values {
 	if c.Token != "" {
-		v.Add("access_token", c.Token)
+		v.Add("accessToken", c.Token)
 	}
 	v.Set("format", "json")
 	v.Set("resultFormat", "json")
