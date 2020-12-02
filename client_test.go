@@ -83,7 +83,6 @@ func ExampleClient_Get() {
 func TestWithContext(t *testing.T) {
 
 	type contextKey string
-
 	var testContextKey contextKey = "test"
 
 	tests := []struct {
