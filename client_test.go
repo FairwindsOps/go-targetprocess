@@ -80,6 +80,47 @@ func ExampleClient_Get() {
 	fmt.Print(string(jsonBytes))
 }
 
+func TestWithContext(t *testing.T) {
+
+	type contextKey string
+
+	var testContextKey contextKey = "test"
+
+	tests := []struct {
+		name         string
+		account      string
+		accessToken  string
+		contextKey   contextKey
+		contextValue string
+	}{
+		{
+			name:         "Add context",
+			account:      "example",
+			accessToken:  "abcd1234",
+			contextKey:   testContextKey,
+			contextValue: "added",
+		},
+	}
+
+	for _, tt := range tests {
+		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			queryParams := r.URL.Query()
+			assert.Equal(t, tt.accessToken, queryParams.Get("accessToken"))
+			_, _ = w.Write([]byte(okResponse))
+		})
+		mockClient, teardown := newMockClient(h, tt.account, tt.accessToken)
+		mockClient.WithContext(context.WithValue(context.Background(), tt.contextKey, tt.contextValue))
+		resp := new(genericResponse)
+		err := mockClient.Get(resp, "Users", nil)
+		teardown()
+		if err != nil {
+			t.Logf("error sending get: %s", err)
+			t.Fail()
+		}
+		assert.Equal(t, tt.contextValue, mockClient.ctx.Value(tt.contextKey))
+	}
+}
+
 func TestGet(t *testing.T) {
 	tests := []struct {
 		name        string

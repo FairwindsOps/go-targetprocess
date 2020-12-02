@@ -106,10 +106,8 @@ func NewClient(account, token string) (*Client, error) {
 
 // WithContext takes a context.Context, sets it as context on the client and returns
 // a Client pointer.
-func (c *Client) WithContext(ctx context.Context) *Client {
-	newC := *c
-	newC.ctx = ctx
-	return &newC
+func (c *Client) WithContext(ctx context.Context) {
+	c.ctx = ctx
 }
 
 // Get is a generic HTTP GET call to the targetprocess api passing in the type of entity and any query filters
