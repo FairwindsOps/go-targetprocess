@@ -17,10 +17,9 @@ package targetprocess
 // DateTime currently does nothing special but will represent the TP DateTime objects
 type DateTime string
 
-// AssignedTeams is used in UserStories and potentially other places.
-// The AssignedTeams section of a UserStory response replaces the deprecated usage of the Team field
-type AssignedTeams struct {
-	Items []TeamAssignment
+// AssignedUser is used in UserStories and potentially other places. Returns a list of user assignments.
+type AssignedUser struct {
+	Items []UserAssignment
 }
 
 // TeamAssignment has it's own unique Id and also includes a reference to the team, which also has an Id
@@ -29,4 +28,9 @@ type TeamAssignment struct {
 	StartDate DateTime `json:",omitempty"`
 	EndDate   DateTime `json:",omitempty"`
 	Team      *Team    `json:",omitempty"`
+}
+
+// UserAssignment has its own unique Id and also includes a reference to a user, which also has an Id
+type UserAssignment struct {
+	User
 }
