@@ -104,7 +104,7 @@ func TestWithContext(t *testing.T) {
 	for _, tt := range tests {
 		h := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			queryParams := r.URL.Query()
-			assert.Equal(t, tt.accessToken, queryParams.Get("accessToken"))
+			assert.Equal(t, tt.accessToken, queryParams.Get("access_token"))
 			_, _ = w.Write([]byte(okResponse))
 		})
 		mockClient, teardown := newMockClient(h, tt.account, tt.accessToken)
@@ -142,7 +142,7 @@ func TestGet(t *testing.T) {
 			assert.Equal(t, "GET", r.Method)
 			assert.Equal(t, fmt.Sprintf("%s.tpondemand.com", tt.account), r.Host)
 			assert.Equal(t, fmt.Sprintf("/api/v2/%s/", tt.entity), r.URL.Path)
-			assert.Equal(t, tt.accessToken, queryParams.Get("accessToken"))
+			assert.Equal(t, tt.accessToken, queryParams.Get("access_token"))
 			assert.Equal(t, "json", queryParams.Get("format"))
 			assert.Equal(t, "json", queryParams.Get("resultFormat"))
 			assert.Equal(t, "go-targetprocess", r.Header.Get("User-Agent"))
@@ -184,7 +184,7 @@ func TestPost(t *testing.T) {
 			assert.Equal(t, "POST", r.Method)
 			assert.Equal(t, fmt.Sprintf("%s.tpondemand.com", tt.account), r.Host)
 			assert.Equal(t, fmt.Sprintf("/api/v1/%s/", tt.entity), r.URL.Path)
-			assert.Equal(t, tt.accessToken, queryParams.Get("accessToken"))
+			assert.Equal(t, tt.accessToken, queryParams.Get("access_token"))
 			assert.Equal(t, "json", queryParams.Get("format"))
 			assert.Equal(t, "json", queryParams.Get("resultFormat"))
 			assert.Equal(t, "go-targetprocess", r.Header.Get("User-Agent"))

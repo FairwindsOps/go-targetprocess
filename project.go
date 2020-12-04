@@ -77,7 +77,7 @@ func (c *Client) GetProject(name string) (Project, error) {
 	ret := Project{}
 	out := ProjectResponse{}
 	err := c.Get(&out, "Project", nil,
-		Where(fmt.Sprintf("Name eq '%s'", name)),
+		Where(fmt.Sprintf("Name == '%s'", name)),
 		First(),
 	)
 	if err != nil {
@@ -111,7 +111,7 @@ func (p Project) NewUserStory(name, description, team string) (UserStory, error)
 // GetProcess returns the process associated with a project
 func (p Project) GetProcess() (*Process, error) {
 	processList, err := p.client.GetProcesses(
-		Where(fmt.Sprintf("Id eq %d", p.Process.ID)),
+		Where(fmt.Sprintf("Id == %d", p.Process.ID)),
 	)
 	if err != nil {
 		return nil, err

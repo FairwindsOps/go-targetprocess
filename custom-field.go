@@ -44,7 +44,7 @@ func (c *Client) GetCustomField(name string) (CustomField, error) {
 	ret := CustomField{}
 	out := CustomFieldResponse{}
 	err := c.Get(&out, "CustomField", nil,
-		Where(fmt.Sprintf("Name eq '%s'", name)),
+		Where(fmt.Sprintf("Name == '%s'", name)),
 		First(),
 	)
 	if err != nil {

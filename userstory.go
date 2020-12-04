@@ -122,7 +122,7 @@ func (c *Client) GetUserStories(page bool, filters ...QueryFilter) ([]UserStory,
 	var ret []UserStory
 	out := UserStoryResponse{}
 
-	err := c.Get(&out, "UserStory", nil, filters...)
+	err := c.Get(&out, "UserStories", nil, filters...)
 	if err != nil {
 		return nil, err
 	}

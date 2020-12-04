@@ -49,14 +49,20 @@ import (
 
 func main() {
 	logger := logrus.New()
-	tpClient := tp.NewClient("exampleCompany", "superSecretToken")
+	tpClient, err := tp.NewClient("exampleCompany", "superSecretToken")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 	tpClient.Logger = logger
 
 	userStories, err := tpClient.GetUserStories(
+		// we set paging to false so we only get the first page of results
+		false,
 		// The Where() filter function takes in any queries the targetprocess API accepts
-                // Read about those here: https://dev.targetprocess.com/docs/sorting-and-filters
-		tp.Where("EntityState.Name ne 'Done'"),
-		tp.Where("EntityState.Name ne 'Backlog'"),
+		// Read about those here: https://dev.targetprocess.com/docs/sorting-and-filters
+		tp.Where("EntityState.Name != 'Done'"),
+		tp.Where("EntityState.Name != 'Backlog'"),
                 // Simlar to Where(), the Include() function will limit the
                 // response to a given list of fields
 		tp.Include("Team", "Name", "ModifyDate"),
@@ -86,7 +92,11 @@ func main() {
 		Prev  string
 		Items []interface{}
 	}{}
-	tpClient := tp.NewClient("exampleCompany", "superSecretToken")
+	tpClient, err := tp.NewClient("exampleCompany", "superSecretToken")
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+    }
 	err := tpClient.Get(&out, "Users", nil)
 	if err != nil {
 		fmt.Println(err)

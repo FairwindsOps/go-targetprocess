@@ -49,7 +49,7 @@ func (c *Client) GetTeam(name string) (Team, error) {
 	ret := Team{}
 	out := TeamResponse{}
 	err := c.Get(&out, "Team", nil,
-		Where(fmt.Sprintf("Name eq '%s'", name)),
+		Where(fmt.Sprintf("Name == '%s'", name)),
 		First(),
 	)
 	if err != nil {

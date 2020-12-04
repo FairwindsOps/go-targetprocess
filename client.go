@@ -222,7 +222,7 @@ func (c *Client) do(out interface{}, req *http.Request, urlPath string) error {
 
 func (c *Client) defaultParams(v url.Values) url.Values {
 	if c.Token != "" {
-		v.Add("accessToken", c.Token)
+		v.Add("access_token", c.Token)
 	}
 	v.Set("format", "json")
 	v.Set("resultFormat", "json")
