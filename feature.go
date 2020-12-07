@@ -70,7 +70,7 @@ func (c *Client) GetFeature(name string) (Feature, error) {
 	ret := Feature{}
 	out := FeatureResponse{}
 	err := c.Get(&out, "Feature", nil,
-		Where(fmt.Sprintf("Name eq '%s'", name)),
+		Where(fmt.Sprintf("Name == '%s'", name)),
 		First(),
 	)
 	if err != nil {

@@ -19,13 +19,17 @@
 // Example Usage:
 //  func main() {
 //    logger := logrus.New()
-//    tpClient := tp.NewClient("exampleCompany", "superSecretToken")
+//    tpClient, err := tp.NewClient("exampleCompany", "superSecretToken")
+// 	  if err != nil {
+//    	fmt.Println(err)
+//      os.Exit(1)
+//    }
 //    tpClient.Logger = logger
 //    userStories, err := tpClient.GetUserStories(
 //    	// The Where() filter function takes in any queries the targetprocess API accepts
 //    	// Read about those here: https://dev.targetprocess.com/docs/sorting-and-filters
-//    	tp.Where("EntityState.Name ne 'Done'"),
-//    	tp.Where("EntityState.Name ne 'Backlog'"),
+//    	tp.Where("EntityState.Name != 'Done'"),
+//    	tp.Where("EntityState.Name != 'Backlog'"),
 //    	// Simlar to Where(), the Include() function will limit the
 //    	// response to a given list of fields
 //    	tp.Include("Team", "Name", "ModifyDate"),
@@ -50,7 +54,11 @@
 //    	Prev  string
 //    	Items []interface{}
 //    }{}
-//    tpClient := tp.NewClient("exampleCompany", "superSecretToken")
+//    tpClient, err := tp.NewClient("exampleCompany", "superSecretToken")
+// 	  if err != nil {
+//    	fmt.Println(err)
+//      os.Exit(1)
+//    }
 //    err := tpClient.Get(&out, "Users", nil)
 //    if err != nil {
 //    	fmt.Println(err)
@@ -66,7 +74,11 @@
 //  logger := logrus.New()
 //  // Also supports logrus.InfoLevel but that is default if you leave out the SetLevel method
 //  logger.SetLevel(logrus.DebugLevel)
-//  client := targetprocess.NewClient(accountName, token)
+//  client, err := targetprocess.NewClient(accountName, token)
+// 	  if err != nil {
+//    	fmt.Println(err)
+//      os.Exit(1)
+//    }
 //  client.Logger = logger
 //
 package targetprocess
