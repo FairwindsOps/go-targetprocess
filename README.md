@@ -117,7 +117,11 @@ do the following:
 logger := logrus.New()
 // Also supports logrus.InfoLevel but that is default if you leave out the SetLevel method
 logger.SetLevel(logrus.DebugLevel)
-client := targetprocess.NewClient(accountName, token)
+client, err := targetprocess.NewClient(accountName, token)
+if err != nil {
+    fmt.Println(err)
+    os.Exit(1)
+}
 client.Logger = logger
 ```
 
