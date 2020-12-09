@@ -14,12 +14,33 @@
 
 package targetprocess
 
+import (
+	"fmt"
+)
+
 // DateTime currently does nothing special but will represent the TP DateTime objects
 type DateTime string
 
-// AssignedUser is used in UserStories and potentially other places. Returns a list of user assignments.
+// Assignments is a generic entity that lists assignments
+type Assignments struct {
+	Items []Assignment `json:",omitempty"`
+}
+
+// Assignment is a generic entity that lists a single assignment
+type Assignment struct {
+	ID           int32  `json:"Id,omitempty"`
+	ResourceType string `json:",omitempty"`
+	GeneralUser  *User  `json:",omitempty"`
+}
+
+// AssignedUser is used in UserStories and potentially other places. Returns a list of user assignments
 type AssignedUser struct {
-	Items []UserAssignment
+	Items []UserAssignment `json:",omitempty"`
+}
+
+// UserAssignment has its own unique Id and also includes a reference to a user, which also has an Id
+type UserAssignment struct {
+	User
 }
 
 // TeamAssignment has it's own unique Id and also includes a reference to the team, which also has an Id
@@ -30,7 +51,7 @@ type TeamAssignment struct {
 	Team      *Team    `json:",omitempty"`
 }
 
-// UserAssignment has its own unique Id and also includes a reference to a user, which also has an Id
-type UserAssignment struct {
-	User
+// GenerateURL takes an account name and entityID and returns a URL that should work in a browser
+func GenerateURL(account string, entityID int32) string {
+	return fmt.Sprintf("https://{%s}.tpondemand.com/entity/%d/RestUI/board.aspx", account, entityID)
 }

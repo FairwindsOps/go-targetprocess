@@ -44,6 +44,9 @@ func init() {
 // Client is the API client for Targetprocess. Create this using NewClient.
 // This can also be constructed manually but it isn't recommended.
 type Client struct {
+	// account is a place to hold the account name for this instance
+	account string
+
 	// baseURL is the base URL for v1 API requests.
 	baseURL *url.URL
 
@@ -95,6 +98,7 @@ func NewClient(account, token string) (*Client, error) {
 		return nil, err
 	}
 	return &Client{
+		account:         account,
 		baseURL:         baseURL,
 		baseURLReadOnly: baseURLReadOnly,
 		Client:          c,
