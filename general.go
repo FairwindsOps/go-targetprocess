@@ -53,5 +53,5 @@ type TeamAssignment struct {
 
 // GenerateURL takes an account name and entityID and returns a URL that should work in a browser
 func GenerateURL(account string, entityID int32) string {
-	return fmt.Sprintf("https://{%s}.tpondemand.com/entity/%d/RestUI/board.aspx", account, entityID)
+	return fmt.Sprintf("https://%s.tpondemand.com/entity/%d/RestUI/board.aspx", account, entityID)
 }
