@@ -43,6 +43,7 @@ type UserStory struct {
 	TimeRemain          float32         `json:",omitempty"`
 	LastStateChangeDate DateTime        `json:",omitempty"`
 	InitialEstimate     float32         `json:",omitempty"`
+	Assignments         *Assignments    `json:",omitempty"`
 	ResponsibleTeam     *TeamAssignment `json:",omitempty"`
 	Team                *Team           `json:",omitempty"`
 	EntityState         *EntityState    `json:",omitempty"`
@@ -112,6 +113,18 @@ func (us *UserStory) SetFeature(feature string) error {
 	return nil
 }
 
+// SetAssignedUserID assigns the UserStory to a User based on their ID number
+func (us *UserStory) SetAssignedUserID(userID int32) {
+	u := User{
+		ID: userID,
+	}
+	au := Assignment{
+		GeneralUser: &u,
+	}
+	assignments := Assignments{Items: []Assignment{au}}
+	us.Assignments = &assignments
+}
+
 // GetUserStories will return all user stories
 //
 // Use with caution if you have a lot and are not setting the MaxPerPage to a high number
@@ -142,25 +155,27 @@ func (c *Client) GetUserStories(page bool, filters ...QueryFilter) ([]UserStory,
 }
 
 // Create takes a UserStory struct and crafts a POST to make it so in TP
-// it returns the ID of the UserStory created
-func (us UserStory) Create() (int32, error) {
+// it returns the ID of the UserStory created as well as a link to the entity
+// on the Target Process frontend
+func (us UserStory) Create() (int32, string, error) {
 	client := us.client
 	resp := &struct {
 		ID int32 `json:"Id"`
 	}{}
 	body, err := json.Marshal(us)
 	if err != nil {
-		return 0, errors.Wrap(err, fmt.Sprintf("error marshaling POST body for UserStory %s", us.Name))
+		return 0, "", errors.Wrap(err, fmt.Sprintf("error marshaling POST body for UserStory %s", us.Name))
 	}
 
 	client.debugLog(fmt.Sprintf("Attempting to POST UserStory: %+v", us))
 	err = client.Post(resp, "UserStory", nil, body)
 	if err != nil {
-		return 0, errors.Wrap(err, fmt.Sprintf("error POSTing UserStory %s", us.Name))
+		return 0, "", errors.Wrap(err, fmt.Sprintf("error POSTing UserStory %s", us.Name))
 	}
 	client.debugLog("[targetprocess] Successfully POSTed UserStory")
 	client.debugLog(fmt.Sprintf("[targetprocess] UserStory created. ID: %d", resp.ID))
-	return resp.ID, nil
+	link := GenerateURL(client.account, resp.ID)
+	return resp.ID, link, nil
 }
 
 // NewUserStoryList returns a UserStoryList from a list of user stories.
@@ -173,24 +188,30 @@ func (c *Client) NewUserStoryList(list []UserStory) *UserStoryList {
 }
 
 // Create posts a list of user stories to create them
-func (usl UserStoryList) Create() ([]int32, error) {
+// returns a list of entity IDs along with a list of links to them
+func (usl UserStoryList) Create() ([]int32, []string, error) {
 	client := usl.client
 	resp := &UserStoryResponse{}
 	body, err := json.Marshal(usl.Stories)
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("error marshaling POST body for UserStoryList %v", usl))
+		return nil, nil, errors.Wrap(err, fmt.Sprintf("error marshaling POST body for UserStoryList %v", usl))
 	}
 	client.debugLog(fmt.Sprintf("[targetprocess] Attempting to POST UserStory: %+v", usl))
 	err = client.Post(resp, "UserStories/bulk", nil, body)
 	if err != nil {
-		return nil, errors.Wrap(err, fmt.Sprintf("error POSTing UserStoryList %v", usl))
+		return nil, nil, errors.Wrap(err, fmt.Sprintf("error POSTing UserStoryList %v", usl))
 	}
 	client.debugLog("[targetprocess] Successfully POSTed UserStoryList")
 
-	var ret []int32
+	var (
+		ret   []int32
+		links []string
+	)
+
 	for _, story := range resp.Items {
 		ret = append(ret, story.ID)
+		links = append(links, GenerateURL(client.account, story.ID))
 	}
 	client.debugLog(fmt.Sprintf("[targetprocess] User stories created with IDs: %v", ret))
-	return ret, nil
+	return ret, links, nil
 }
