@@ -46,6 +46,7 @@ type UserStory struct {
 	Assignments         *Assignments    `json:",omitempty"`
 	ResponsibleTeam     *TeamAssignment `json:",omitempty"`
 	Team                *Team           `json:",omitempty"`
+	Priority            *Priority       `json:",omitempty"`
 	EntityState         *EntityState    `json:",omitempty"`
 	AssignedUser        *AssignedUser   `json:",omitempty"`
 	Feature             *Feature        `json:",omitempty"`
