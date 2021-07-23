@@ -91,6 +91,17 @@ func (c *Client) GetProject(name string) (Project, error) {
 	return ret, nil
 }
 
+// NewFeature will make a Feature assigned to the Project that this method is built off of and for the given Team
+func (p Project) NewFeature(name, description string) (Feature, error) {
+	f := Feature{
+		client:      p.client,
+		Name:        name,
+		Description: description,
+	}
+	f.Project = &p
+	return f, nil
+}
+
 // NewUserStory will make a UserStory for assigned to the Project that this method is built off of and for the given Team
 func (p Project) NewUserStory(name, description, team string) (UserStory, error) {
 	us := UserStory{

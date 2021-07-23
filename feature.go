@@ -15,6 +15,7 @@
 package targetprocess
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -39,6 +40,23 @@ type FeatureResponse struct {
 	Items []Feature
 	Next  string
 	Prev  string
+}
+
+// NewFeature creates a Feature struct with the required fields of
+// name, description, and project.
+func NewFeature(c *Client, name, description, project string) (Feature, error) {
+	f := Feature{
+		client:      c,
+		Name:        name,
+		Description: description,
+	}
+	c.debugLog(fmt.Sprintf("[targetprocess] Attempting to Get Project: %s", project))
+	p, err := c.GetProject(project)
+	if err != nil {
+		return Feature{}, err
+	}
+	f.Project = &p
+	return f, nil
 }
 
 // GetFeatures will return all features
@@ -92,4 +110,28 @@ func (f Feature) NewUserStory(name, description, project string) (UserStory, err
 	}
 	us.Feature = &f
 	return us, nil
+}
+
+// Create takes a Feature struct and crafts a POST request to TP and sends it
+// it returns the ID of the Feature created as well as a link to the entity
+// on the Target Process frontend
+func (f Feature) Create() (int32, string, error) {
+	client := f.client
+	resp := &struct {
+		ID int32 `json:"Id"`
+	}{}
+	body, err := json.Marshal(f)
+	if err != nil {
+		return 0, "", errors.Wrap(err, fmt.Sprintf("error marshaling POST body for Feature %s", f.Name))
+	}
+
+	client.debugLog(fmt.Sprintf("Attempting to POST Feature: %+v", f))
+	err = client.Post(resp, "Feature", nil, body)
+	if err != nil {
+		return 0, "", errors.Wrap(err, fmt.Sprintf("error POSTing Feature %s", f.Name))
+	}
+	client.debugLog("[targetprocess] Successfully POSTed Feature")
+	client.debugLog(fmt.Sprintf("[targetprocess] Feature created. ID: %d", resp.ID))
+	link := GenerateURL(client.account, resp.ID)
+	return resp.ID, link, nil
 }
