@@ -1,3 +1,4 @@
 cover-report.html
 coverage.txt
 govet-report.out
+hack/
