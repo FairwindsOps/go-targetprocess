@@ -132,3 +132,7 @@ func (p Project) GetProcess() (*Process, error) {
 	}
 	return &processList[0], nil
 }
+
+func (p *Project) GetRelease(name string) (Release, error) {
+	return p.client.GetRelease(p, name)
+}
