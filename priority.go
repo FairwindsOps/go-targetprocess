@@ -39,7 +39,7 @@ type PriorityResponse struct {
 
 // GetPriority will return one Priority object by matching the name as well as the EntityType that it's assigned to (ex. UserStory)
 func (c *Client) GetPriority(name, entityType string) (Priority, error) {
-	c.debugLog(fmt.Sprintf("[targetprocess] attempting to get Priority: %s, for EntityType: %s", name, entityType))
+	c.debugLog(fmt.Sprintf("[targetprocess] Attempting to Get Priority: %s, for EntityType: %s", name, entityType))
 	ret := Priority{}
 	out := PriorityResponse{}
 	err := c.Get(&out, "Priority", nil,

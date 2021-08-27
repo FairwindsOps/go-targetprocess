@@ -28,11 +28,11 @@ type Release struct {
 	ID               int32         `json:"Id,omitempty"`
 	Name             string        `json:",omitempty"`
 	Effort           float32       `json:",omitempty"`
-	UserStoriesCount int64         `json:"UserStories-Count,omitempty"`
-	Project          *Project      `json:",omitempty"`
 	Description      string        `json:",omitempty"`
 	NumericPriority  float32       `json:",omitempty"`
 	CustomFields     []CustomField `json:",omitempty"`
+	
+	Project          *Project      `json:",omitempty"`
 }
 
 // ReleaseResponse is a representation of the http response for a group of Releases
@@ -83,16 +83,26 @@ func (c *Client) GetReleases(filters ...QueryFilter) ([]Release, error) {
 
 // GetRelease will return a single release based on its name. If somehow there are releases with the same name,
 // this will only return the first one.
-func (c *Client) GetRelease(project *Project, name string) (Release, error) {
-	c.debugLog(fmt.Sprintf("[targetprocess] attempting to get release: %s, for project: %s", name, project.Name))
+func (c *Client) GetRelease(projectName string, name string) (Release, error) {
+	c.debugLog(fmt.Sprintf("[targetprocess] Attempting to Get Project: %s", projectName))
+	p, err := c.GetProject(projectName)
+	if err != nil {
+		return Release{}, errors.Wrap(err, fmt.Sprintf("error getting release with name '%s' for project '%s'", name, projectName))
+	}
+
+	return c.getRelease(&p, name)
+}
+
+func (c *Client) getRelease(p *Project, name string) (Release, error) {
+	c.debugLog(fmt.Sprintf("[targetprocess] Attempting to Get Release: %s, for Project: %s", name, p.Name))
 	ret := Release{}
 	out := ReleaseResponse{}
 	err := c.Get(&out, "Release", nil,
-		Where(fmt.Sprintf("Name == '%s'", name), fmt.Sprintf("Project.Id == %d", project.ID)),
+		Where(fmt.Sprintf("Name == '%s'", name), fmt.Sprintf("Project.Id == %d", p.ID)),
 		First(),
 	)
 	if err != nil {
-		return Release{}, errors.Wrap(err, fmt.Sprintf("error getting release with name '%s' for project '%s'", name, project.Name))
+		return Release{}, errors.Wrap(err, fmt.Sprintf("error getting release with name '%s' for project '%s'", name, p.Name))
 	}
 	if len(out.Items) < 1 {
 		return ret, fmt.Errorf("no items found")

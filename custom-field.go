@@ -40,7 +40,7 @@ type CustomFieldResponse struct {
 
 // GetCustomField will return a CustomField object from a name. Returns an error if not found.
 func (c *Client) GetCustomField(name string) (CustomField, error) {
-	c.debugLog(fmt.Sprintf("[targetprocess] attempting to get CustomField: %s", name))
+	c.debugLog(fmt.Sprintf("[targetprocess] Attempting to Get CustomField: %s", name))
 	ret := CustomField{}
 	out := CustomFieldResponse{}
 	err := c.Get(&out, "CustomField", nil,

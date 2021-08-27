@@ -102,6 +102,17 @@ func (p Project) NewFeature(name, description string) (Feature, error) {
 	return f, nil
 }
 
+// NewRelease will make a Release assigned to the Project that this method is built off of and for the given Team
+func (p Project) NewRelease(name, description string) (Release, error) {
+	r := Release{
+		client:      p.client,
+		Name:        name,
+		Description: description,
+	}
+	r.Project = &p
+	return r, nil
+}
+
 // NewUserStory will make a UserStory for assigned to the Project that this method is built off of and for the given Team
 func (p Project) NewUserStory(name, description, team string) (UserStory, error) {
 	us := UserStory{
@@ -134,5 +145,5 @@ func (p Project) GetProcess() (*Process, error) {
 }
 
 func (p *Project) GetRelease(name string) (Release, error) {
-	return p.client.GetRelease(p, name)
+	return p.client.getRelease(p, name)
 }
