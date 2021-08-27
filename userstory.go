@@ -128,6 +128,21 @@ func (us *UserStory) SetAssignedUserID(userID int32) {
 	us.Assignments = &assignments
 }
 
+func (c *Client) GetUserStory(id uint64) (*UserStory, error) {
+	out := UserStoryResponse{}
+
+	err := c.Get(&out, "UserStories", nil, Where(fmt.Sprintf("Id == %d", id)))
+	if err != nil && err.Error() != "no items found" {
+		return nil, err
+	}
+
+	if len(out.Items) == 0 {
+		return nil, nil
+	}
+
+	return &out.Items[0], nil
+}
+
 // GetUserStories will return all user stories
 //
 // Use with caution if you have a lot and are not setting the MaxPerPage to a high number

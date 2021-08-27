@@ -128,6 +128,21 @@ func (us *Bug) SetAssignedUserID(userID int32) {
 	us.Assignments = &assignments
 }
 
+func (c *Client) GetBug(id uint64) (*Bug, error) {
+	out := BugResponse{}
+
+	err := c.Get(&out, "Bugs", nil, Where(fmt.Sprintf("Id == %d", id)))
+	if err != nil && err.Error() != "no items found" {
+		return nil, err
+	}
+
+	if len(out.Items) == 0 {
+		return nil, nil
+	}
+
+	return &out.Items[0], nil
+}
+
 // GetBugs will return all bugs
 //
 // Use with caution if you have a lot and are not setting the MaxPerPage to a high number
