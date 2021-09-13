@@ -30,108 +30,17 @@ Package targetprocess is a go library to make using the Targetprocess API easier
 public types are included to ease in json -> struct unmarshaling.
 A lot of inspiration for this package comes from https://github.com/adlio/trello
 
+<!-- Begin boilerplate -->
 ## Join the Fairwinds Open Source Community
 
-The goal of the Fairwinds Community is to exchange ideas, influence the open source roadmap, and network with fellow Kubernetes users. [Chat with us on Slack](https://join.slack.com/t/fairwindscommunity/shared_invite/zt-e3c6vj4l-3lIH6dvKqzWII5fSSFDi1g) or [join the user group](https://www.fairwinds.com/open-source-software-user-group) to get involved!
+The goal of the Fairwinds Community is to exchange ideas, influence the open source roadmap,
+and network with fellow Kubernetes users.
+[Chat with us on Slack](https://join.slack.com/t/fairwindscommunity/shared_invite/zt-e3c6vj4l-3lIH6dvKqzWII5fSSFDi1g)
+[join the user group](https://www.fairwinds.com/open-source-software-user-group) to get involved!
 
-## Usage
-
-```go
-package main
-
-import (
-	"encoding/json"
-	"fmt"
-	"os"
-
-	"github.com/sirupsen/logrus"
-
-	tp "github.com/FairwindsOps/go-targetprocess"
-)
-
-func main() {
-	logger := logrus.New()
-	tpClient, err := tp.NewClient("exampleCompany", "superSecretToken")
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	tpClient.Logger = logger
-
-	userStories, err := tpClient.GetUserStories(
-		// we set paging to false so we only get the first page of results
-		false,
-		// The Where() filter function takes in any queries the targetprocess API accepts
-		// Read about those here: https://dev.targetprocess.com/docs/sorting-and-filters
-		tp.Where("EntityState.Name != 'Done'"),
-		tp.Where("EntityState.Name != 'Backlog'"),
-                // Simlar to Where(), the Include() function will limit the
-                // response to a given list of fields
-		tp.Include("Team", "Name", "ModifyDate"),
-	)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	jsonBytes, _ := json.Marshal(userStories)
-	fmt.Print(string(jsonBytes))
-}
-```
-
-## Custom structs for queries
-
-go-targetprocess includes some built-in structs that can be used for Users, Projects, Teams, and UserStories. You don't
-have to use those though and can use the generic `Get()` method with a custom struct as the output for a response to be
-JSON decoded into. Filtering functions (`Where()`, `Include()`, etc.) can be used in `Get()` just like they can in
-any of the helper functions.
-
-Ex:
-
-```go
-func main() {
-	out := struct {
-		Next  string
-		Prev  string
-		Items []interface{}
-	}{}
-	tpClient, err := tp.NewClient("exampleCompany", "superSecretToken")
-    if err != nil {
-        fmt.Println(err)
-        os.Exit(1)
-    }
-	err := tpClient.Get(&out, "Users", nil)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	jsonBytes, _ := json.Marshal(out)
-	fmt.Print(string(jsonBytes))
-}
-```
-
-## Debug Logging
-
-This idea was taken directly from the https://github.com/adlio/trello package. To add a debug logger,
-do the following:
-
-```go
-logger := logrus.New()
-// Also supports logrus.InfoLevel but that is default if you leave out the SetLevel method
-logger.SetLevel(logrus.DebugLevel)
-client, err := targetprocess.NewClient(accountName, token)
-if err != nil {
-    fmt.Println(err)
-    os.Exit(1)
-}
-client.Logger = logger
-```
-
-## Contributing
-
-PRs welcome! Check out the [Contributing Guidelines](CONTRIBUTING.md) and
-[Code of Conduct](CODE_OF_CONDUCT.md) for more information.
-
+<a href="https://www.fairwinds.com/t-shirt-offer?utm_source=go-targetprocess&utm_medium=go-targetprocess&utm_campaign=go-targetprocess-tshirt">
+  <img src="https://www.fairwinds.com/hubfs/Doc_Banners/Fairwinds_OSS_User_Group_740x125_v6.png" alt="Love Fairwinds Open Source? Share your business email and job title and we'll send you a free Fairwinds t-shirt!" />
+</a>
 
 ## Other Projects from Fairwinds
 
@@ -141,5 +50,3 @@ Enjoying go-targetprocess? Check out some of our other projects:
 * [Pluto](https://github.com/FairwindsOps/Pluto) - Detect Kubernetes resources that have been deprecated or removed in future versions
 * [Nova](https://github.com/FairwindsOps/Nova) - Check to see if any of your Helm charts have updates available
 * [rbac-manager](https://github.com/FairwindsOps/rbac-manager) - Simplify the management of RBAC in your Kubernetes clusters
-
-Or [check out the full list](https://www.fairwinds.com/open-source-software?utm_source=go-targetprocess&utm_medium=go-targetprocess&utm_campaign=go-targetprocess)
