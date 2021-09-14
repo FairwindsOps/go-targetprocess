@@ -30,6 +30,98 @@ Package targetprocess is a go library to make using the Targetprocess API easier
 public types are included to ease in json -> struct unmarshaling.
 A lot of inspiration for this package comes from https://github.com/adlio/trello
 
+## Usage
+
+```go
+package main
+import (
+	"encoding/json"
+	"fmt"
+	"os"
+	"github.com/sirupsen/logrus"
+	tp "github.com/FairwindsOps/go-targetprocess"
+)
+func main() {
+	logger := logrus.New()
+	tpClient, err := tp.NewClient("exampleCompany", "superSecretToken")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	tpClient.Logger = logger
+	userStories, err := tpClient.GetUserStories(
+		// we set paging to false so we only get the first page of results
+		false,
+		// The Where() filter function takes in any queries the targetprocess API accepts
+		// Read about those here: https://dev.targetprocess.com/docs/sorting-and-filters
+		tp.Where("EntityState.Name != 'Done'"),
+		tp.Where("EntityState.Name != 'Backlog'"),
+                // Simlar to Where(), the Include() function will limit the
+                // response to a given list of fields
+		tp.Include("Team", "Name", "ModifyDate"),
+	)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	jsonBytes, _ := json.Marshal(userStories)
+	fmt.Print(string(jsonBytes))
+}
+```
+
+## Custom structs for queries
+
+go-targetprocess includes some built-in structs that can be used for Users, Projects, Teams, and UserStories. You don't
+have to use those though and can use the generic `Get()` method with a custom struct as the output for a response to be
+JSON decoded into. Filtering functions (`Where()`, `Include()`, etc.) can be used in `Get()` just like they can in
+any of the helper functions.
+
+Ex:
+
+```go
+func main() {
+	out := struct {
+		Next  string
+		Prev  string
+		Items []interface{}
+	}{}
+	tpClient, err := tp.NewClient("exampleCompany", "superSecretToken")
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+    }
+	err := tpClient.Get(&out, "Users", nil)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	jsonBytes, _ := json.Marshal(out)
+	fmt.Print(string(jsonBytes))
+}
+```
+
+## Debug Logging
+
+This idea was taken directly from the https://github.com/adlio/trello package. To add a debug logger,
+do the following:
+
+```go
+logger := logrus.New()
+// Also supports logrus.InfoLevel but that is default if you leave out the SetLevel method
+logger.SetLevel(logrus.DebugLevel)
+client, err := targetprocess.NewClient(accountName, token)
+if err != nil {
+    fmt.Println(err)
+    os.Exit(1)
+}
+client.Logger = logger
+```
+
+## Contributing
+
+PRs welcome! Check out the [Contributing Guidelines](CONTRIBUTING.md) and
+[Code of Conduct](CODE_OF_CONDUCT.md) for more information.
+
 <!-- Begin boilerplate -->
 ## Join the Fairwinds Open Source Community
 
